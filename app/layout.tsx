@@ -9,12 +9,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="fr" className="light">
       <head>
         <meta charSet="UTF-8" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Sui dApp Starter</title>
+        <title>RainGuard - Assurance Agricole Indexée</title>
       </head>
       <body>
         <Providers>

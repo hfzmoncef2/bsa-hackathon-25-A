@@ -15,19 +15,24 @@ import {
 
 const components: { title: string; href: string; description: string }[] = [
   {
-    title: "Counter",
-    href: "/counter",
-    description: "View and interact with the counter component.",
+    title: "Tableau de Bord",
+    href: "/dashboard",
+    description: "Accédez à votre tableau de bord d'assurance agricole.",
   },
   {
-    title: "Create Counter",
+    title: "Nouveau Contrat",
     href: "/create",
-    description: "Create a new counter instance on the blockchain.",
+    description: "Souscrivez un nouveau contrat d'assurance indexé.",
   },
   {
-    title: "About",
+    title: "Données Météo",
+    href: "/weather",
+    description: "Consultez les données météo en temps réel.",
+  },
+  {
+    title: "À Propos",
     href: "/about",
-    description: "Learn more about this counter application.",
+    description: "Découvrez RainGuard et l'assurance agricole indexée.",
   },
 ];
 
@@ -39,7 +44,7 @@ export default function Navbar() {
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
               <Link href="/" className="flex items-center space-x-2 font-semibold text-lg text-gray-900">
-                Counter App
+                🌾 RainGuard
               </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
@@ -55,10 +60,10 @@ export default function Navbar() {
                       href="/"
                     >
                       <div className="mb-2 mt-4 text-lg font-medium text-gray-900">
-                        Counter App
+                        RainGuard
                       </div>
                       <p className="text-sm leading-tight text-slate-600">
-                        A beautiful counter application built with Next.js and Tailwind CSS.
+                        Assurance agricole indexée sur blockchain pour protéger vos récoltes.
                       </p>
                     </Link>
                   </NavigationMenuLink>
@@ -78,7 +83,7 @@ export default function Navbar() {
 
           <NavigationMenuItem>
             <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-              <Link href="/" className="text-gray-900">Home</Link>
+              <Link href="/" className="text-gray-900">Accueil</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
         </div>

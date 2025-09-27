@@ -1,13 +1,9 @@
-module rainguard::parametric_insurance {
-    use std::string::String;
-    use std::vector;
+module rainguard::parametric_insurance_simple {
     use sui::object::{Self, UID};
     use sui::transfer;
-    use sui::tx_context::{Self, TxContext};
-    use sui::clock::{Self, Clock};
+    use sui::tx_context::TxContext;
     use sui::table::{Self, Table};
     use sui::vec_set::{Self, VecSet};
-    use sui::vec_map::{Self, VecMap};
     use sui::event;
     use sui::balance::{Self, Balance};
     use sui::coin::{Self, Coin};
@@ -18,8 +14,6 @@ module rainguard::parametric_insurance {
     const ERR_INVALID_ORACLE_DATA: u64 = 1;
     const ERR_POLICY_NOT_FOUND: u64 = 2;
     const ERR_CLAIM_ALREADY_PROCESSED: u64 = 3;
-    const ERR_INVALID_WEATHER_INDEX: u64 = 4;
-    const ERR_ORACLE_QUORUM_NOT_MET: u64 = 5;
     const ERR_POLICY_EXPIRED: u64 = 6;
 
     // Types de produits d'assurance
@@ -28,205 +22,188 @@ module rainguard::parametric_insurance {
 
     // ===== STRUCTS =====
 
-    /// Oracle météo sécurisé Nautilus TEE
+    /// Données météo de l'oracle Nautilus TEE
+    public struct WeatherData has store, drop, copy {
+        /// Timestamp des données
+        timestamp: u64,
+        /// Pluie cumulée (pour produit saisonnier)
+        cumulative_rainfall: u64,
+        /// Pluie 24h (pour produit événementiel)
+        rainfall_24h: u64,
+        /// Score de confiance de l'oracle
+        confidence_score: u8,
+        /// Adresse de l'oracle
+        oracle_address: address,
+        /// Signature de l'oracle
+        oracle_signature: vector<u8>,
+    }
+
+    /// Feed de données oracle
     public struct OracleFeed has key, store {
         id: UID,
-        /// Données météo signées par l'oracle
+        /// Données météo stockées par timestamp
         weather_data: Table<u64, WeatherData>,
-        /// Quorum requis pour validation
+        /// Seuil de quorum requis
         quorum_threshold: u8,
         /// Oracles autorisés
         authorized_oracles: VecSet<address>,
-        /// Timestamp de la dernière mise à jour
+        /// Dernière mise à jour
         last_update: u64,
     }
 
-    /// Données météo validées par l'oracle
-    public struct WeatherData has store {
-        /// Timestamp de la mesure
-        timestamp: u64,
-        /// Latitude de la station météo
-        latitude: u64,
-        /// Longitude de la station météo  
-        longitude: u64,
-        /// Pluie cumulée (mm) pour produit saisonnier
-        cumulative_rainfall: u64,
-        /// Pluie 24h (mm) pour produit événementiel
-        rainfall_24h: u64,
-        /// Signature de l'oracle Nautilus
-        oracle_signature: vector<u8>,
-        /// Adresse de l'oracle qui a signé
-        oracle_address: address,
-        /// Indice de confiance (0-100)
-        confidence_score: u8,
+    /// Zone de couverture géographique
+    public struct CoverageArea has store, drop {
+        /// Latitude du centre
+        center_latitude: u64,
+        /// Longitude du centre
+        center_longitude: u64,
+        /// Rayon en mètres
+        radius_meters: u64,
     }
 
     /// Police d'assurance paramétrique
     public struct ParametricPolicy has key, store {
         id: UID,
-        /// Adresse du propriétaire
+        /// Détenteur de la police
         policyholder: address,
-        /// Type de produit (saisonnier ou événementiel)
+        /// Type de produit (1=saisonnier, 2=événementiel)
         product_type: u8,
         /// Montant de couverture
         coverage_amount: u64,
         /// Prime payée
         premium_paid: u64,
-        /// Période de couverture (début)
+        /// Début de couverture (timestamp)
         coverage_start: u64,
-        /// Période de couverture (fin)
+        /// Fin de couverture (timestamp)
         coverage_end: u64,
         /// Seuil de déclenchement (mm de pluie)
         trigger_threshold: u64,
         /// Seuil de saturation (mm de pluie)
         saturation_threshold: u64,
-        /// Coordonnées géographiques couvertes
+        /// Zone de couverture
         coverage_area: CoverageArea,
-        /// Statut de la police
-        status: u8, // 1=active, 2=expired, 3=claimed
-        /// Réclamations traitées
-        claims_processed: u64,
-        /// Montant total des paiements
-        total_payouts: u64,
-    }
-
-    /// Zone géographique de couverture
-    public struct CoverageArea has store {
-        /// Latitude du centre
-        center_latitude: u64,
-        /// Longitude du centre
-        center_longitude: u64,
-        /// Rayon de couverture (mètres)
-        radius_meters: u64,
+        /// Statut (1=active, 2=suspendue, 3=expirée)
+        status: u8,
     }
 
     /// Réclamation paramétrique
     public struct ParametricClaim has key, store {
         id: UID,
         /// ID de la police
-        policy_id: ID,
+        policy_id: object::ID,
         /// Type de réclamation
         claim_type: u8,
         /// Montant réclamé
         claim_amount: u64,
-        /// Indice météo au moment de la réclamation
+        /// Index météo au moment de la réclamation
         weather_index: u64,
         /// Timestamp de la réclamation
         claim_timestamp: u64,
-        /// Statut de la réclamation
-        status: u8, // 1=pending, 2=approved, 3=rejected
+        /// Statut (1=en attente, 2=approuvée, 3=rejetée)
+        status: u8,
         /// Justification du paiement
-        payout_justification: String,
+        payout_justification: std::string::String,
     }
 
     /// Pool d'assurance paramétrique
-    public struct ParametricInsurancePool has key {
+    public struct ParametricInsurancePool has key, store {
         id: UID,
-        /// Solde total du pool
-        total_balance: Balance<SUI>,
+        /// Balance du pool
+        balance: Balance<SUI>,
         /// Polices actives
-        active_policies: Table<ID, ParametricPolicy>,
-        /// Réclamations en cours
-        pending_claims: Table<ID, ParametricClaim>,
+        active_policies: Table<object::ID, ParametricPolicy>,
+        /// Réclamations en attente
+        pending_claims: Table<object::ID, ParametricClaim>,
         /// Statistiques du pool
         pool_stats: PoolStats,
         /// Oracle feeds autorisés
-        authorized_oracle_feeds: VecSet<ID>,
+        authorized_oracle_feeds: VecSet<object::ID>,
     }
 
     /// Statistiques du pool
-    public struct PoolStats has store {
+    public struct PoolStats has store, copy, drop {
         /// Nombre total de polices
         total_policies: u64,
         /// Nombre de polices actives
         active_policies: u64,
         /// Nombre total de réclamations
         total_claims: u64,
-        /// Montant total des primes collectées
-        total_premiums: u64,
-        /// Montant total des paiements
+        /// Montant total payé
         total_payouts: u64,
-        /// Réclamations approuvées
-        approved_claims: u64,
-    }
-
-    /// Capacité d'administration du pool
-    public struct AdminCap has key, store {
-        id: UID,
-        /// Adresse de l'administrateur
-        admin_address: address,
+        /// Prime totale collectée
+        total_premiums: u64,
     }
 
     /// Capacité de détenteur de police
     public struct PolicyHolderCap has key, store {
         id: UID,
         /// ID de la police
-        policy_id: ID,
-        /// Adresse du détenteur
-        holder_address: address,
+        policy_id: object::ID,
+    }
+
+    /// Capacité administrateur
+    public struct AdminCap has key, store {
+        id: UID,
+        /// Adresse de l'administrateur
+        admin_address: address,
     }
 
     // ===== EVENTS =====
 
-    public struct PolicyCreated has copy, drop {
-        policy_id: ID,
-        policyholder: address,
-        product_type: u8,
-        coverage_amount: u64,
-        premium: u64,
-    }
-
-    public struct ClaimSubmitted has copy, drop {
-        claim_id: ID,
-        policy_id: ID,
-        claim_amount: u64,
-        weather_index: u64,
-    }
-
-    public struct ClaimProcessed has copy, drop {
-        claim_id: ID,
-        policy_id: ID,
-        payout_amount: u64,
-        status: u8,
-    }
-
+    /// Événement émis lors de la mise à jour des données oracle
     public struct OracleDataUpdated has copy, drop {
-        oracle_feed_id: ID,
+        oracle_feed_id: object::ID,
         timestamp: u64,
         weather_index: u64,
         oracle_address: address,
     }
 
-    // ===== INITIALIZATION =====
+    /// Événement émis lors de la création d'une police
+    public struct PolicyCreated has copy, drop {
+        policy_id: object::ID,
+        policyholder: address,
+        product_type: u8,
+        coverage_amount: u64,
+    }
 
-    /// Initialise le système d'assurance paramétrique
+    /// Événement émis lors d'une réclamation
+    public struct ClaimSubmitted has copy, drop {
+        claim_id: object::ID,
+        policy_id: object::ID,
+        claim_amount: u64,
+        weather_index: u64,
+    }
+
+    // ===== PUBLIC FUNCTIONS =====
+
+    /// Fonction d'initialisation
     fun init(ctx: &mut TxContext) {
+        // Créer le pool d'assurance paramétrique
+        let pool = ParametricInsurancePool {
+            id: object::new(ctx),
+            balance: balance::zero<SUI>(),
+            active_policies: table::new<object::ID, ParametricPolicy>(ctx),
+            pending_claims: table::new<object::ID, ParametricClaim>(ctx),
+            pool_stats: PoolStats {
+                total_policies: 0,
+                active_policies: 0,
+                total_claims: 0,
+                total_payouts: 0,
+                total_premiums: 0,
+            },
+            authorized_oracle_feeds: vec_set::empty<object::ID>(),
+        };
+
+        // Créer la capacité administrateur
         let admin_cap = AdminCap {
             id: object::new(ctx),
             admin_address: tx_context::sender(ctx),
         };
 
-        let pool = ParametricInsurancePool {
-            id: object::new(ctx),
-            total_balance: balance::zero<SUI>(),
-            active_policies: table::new(ctx),
-            pending_claims: table::new(ctx),
-            pool_stats: PoolStats {
-                total_policies: 0,
-                active_policies: 0,
-                total_claims: 0,
-                total_premiums: 0,
-                total_payouts: 0,
-                approved_claims: 0,
-            },
-            authorized_oracle_feeds: vec_set::empty(),
-        };
-
+        // Partager le pool et transférer l'admin cap
         transfer::share_object(pool);
         transfer::transfer(admin_cap, tx_context::sender(ctx));
     }
-
-    // ===== ORACLE MANAGEMENT =====
 
     /// Crée un nouveau feed oracle
     public fun create_oracle_feed(
@@ -235,7 +212,7 @@ module rainguard::parametric_insurance {
         ctx: &mut TxContext
     ): OracleFeed {
         let mut oracle_set = vec_set::empty<address>();
-        let i = 0;
+        let mut i = 0;
         while (i < vector::length(&authorized_oracles)) {
             vec_set::insert(&mut oracle_set, *vector::borrow(&authorized_oracles, i));
             i = i + 1;
@@ -243,7 +220,7 @@ module rainguard::parametric_insurance {
 
         OracleFeed {
             id: object::new(ctx),
-            weather_data: table::new(ctx),
+            weather_data: table::new<u64, WeatherData>(ctx),
             quorum_threshold,
             authorized_oracles: oracle_set,
             last_update: 0,
@@ -254,7 +231,7 @@ module rainguard::parametric_insurance {
     public fun update_weather_data(
         oracle_feed: &mut OracleFeed,
         weather_data: WeatherData,
-        ctx: &mut TxContext
+        _ctx: &mut TxContext
     ) {
         // Vérifier que l'oracle est autorisé
         assert!(vec_set::contains(&oracle_feed.authorized_oracles, &weather_data.oracle_address), ERR_INVALID_ORACLE_DATA);
@@ -272,8 +249,6 @@ module rainguard::parametric_insurance {
         });
     }
 
-    // ===== POLICY MANAGEMENT =====
-
     /// Crée une nouvelle police d'assurance paramétrique
     public fun create_parametric_policy(
         policyholder: address,
@@ -286,8 +261,12 @@ module rainguard::parametric_insurance {
         saturation_threshold: u64,
         coverage_area: CoverageArea,
         pool: &mut ParametricInsurancePool,
+        payment: Coin<SUI>,
         ctx: &mut TxContext
-    ): (ParametricPolicy, PolicyHolderCap) {
+    ): PolicyHolderCap {
+        // Vérifier que le paiement est suffisant
+        assert!(coin::value(&payment) >= premium_amount, ERR_INSUFFICIENT_FUNDS);
+
         let policy_id = object::id_from_address(tx_context::fresh_object_address(ctx));
         
         let policy = ParametricPolicy {
@@ -302,20 +281,18 @@ module rainguard::parametric_insurance {
             saturation_threshold,
             coverage_area,
             status: 1, // active
-            claims_processed: 0,
-            total_payouts: 0,
         };
 
-        let policy_cap = PolicyHolderCap {
+        let policy_holder_cap = PolicyHolderCap {
             id: object::new(ctx),
             policy_id,
-            holder_address: policyholder,
         };
 
+        // Ajouter la prime au pool
+        balance::join(&mut pool.balance, coin::into_balance(payment));
+        
         // Ajouter la police au pool
         table::add(&mut pool.active_policies, policy_id, policy);
-        
-        // Mettre à jour les statistiques
         pool.pool_stats.total_policies = pool.pool_stats.total_policies + 1;
         pool.pool_stats.active_policies = pool.pool_stats.active_policies + 1;
         pool.pool_stats.total_premiums = pool.pool_stats.total_premiums + premium_amount;
@@ -326,37 +303,31 @@ module rainguard::parametric_insurance {
             policyholder,
             product_type,
             coverage_amount,
-            premium: premium_amount,
         });
 
-        (policy, policy_cap)
+        policy_holder_cap
     }
-
-    // ===== CLAIM PROCESSING =====
 
     /// Soumet une réclamation paramétrique
     public fun submit_parametric_claim(
-        policy_id: ID,
-        claim_type: u8,
-        weather_index: u64,
-        oracle_feed: &OracleFeed,
         pool: &mut ParametricInsurancePool,
+        oracle_feed: &OracleFeed,
+        policy_id: object::ID,
+        weather_index: u64,
+        claim_type: u8,
         ctx: &mut TxContext
-    ): ParametricClaim {
-        // Récupérer la police
+    ): object::ID {
+        // Vérifier que la police existe
+        assert!(table::contains(&pool.active_policies, policy_id), ERR_POLICY_NOT_FOUND);
+        
         let policy = table::borrow_mut(&mut pool.active_policies, policy_id);
         assert!(policy.status == 1, ERR_POLICY_NOT_FOUND); // active
         assert!(policy.status != 3, ERR_POLICY_EXPIRED); // not expired
-
-        // Vérifier que les données oracle sont récentes
-        let current_time = clock::timestamp_ms(clock::Clock::dummy());
-        assert!(oracle_feed.last_update > current_time - 3600000, ERR_INVALID_ORACLE_DATA); // 1 heure
 
         // Calculer le montant de la réclamation
         let claim_amount = calculate_parametric_payout(
             policy,
             weather_index,
-            claim_type
         );
 
         let claim = ParametricClaim {
@@ -365,167 +336,128 @@ module rainguard::parametric_insurance {
             claim_type,
             claim_amount,
             weather_index,
-            claim_timestamp: current_time,
+            claim_timestamp: oracle_feed.last_update,
             status: 1, // pending
-            payout_justification: string::utf8(b"Parametric trigger met"),
+            payout_justification: std::string::utf8(b"Parametric trigger met"),
         };
 
+        // Obtenir l'ID avant de déplacer la réclamation
+        let claim_id = object::id(&claim);
+        
         // Ajouter la réclamation au pool
-        table::add(&mut pool.pending_claims, object::id(&claim), claim);
+        table::add(&mut pool.pending_claims, claim_id, claim);
         pool.pool_stats.total_claims = pool.pool_stats.total_claims + 1;
 
         // Émettre l'événement
         event::emit(ClaimSubmitted {
-            claim_id: object::id(&claim),
+            claim_id,
             policy_id,
             claim_amount,
             weather_index,
         });
 
-        claim
+        claim_id
     }
-
-    /// Traite une réclamation paramétrique
-    public fun process_parametric_claim(
-        claim_id: ID,
-        pool: &mut ParametricInsurancePool,
-        ctx: &mut TxContext
-    ) {
-        let claim = table::borrow_mut(&mut pool.pending_claims, claim_id);
-        assert!(claim.status == 1, ERR_CLAIM_ALREADY_PROCESSED); // pending
-
-        let policy = table::borrow_mut(&mut pool.active_policies, claim.policy_id);
-        
-        // Vérifier les conditions de déclenchement
-        let should_pay = check_parametric_trigger(
-            policy,
-            claim.weather_index,
-            claim.claim_type
-        );
-
-        if (should_pay) {
-            // Approuver la réclamation
-            claim.status = 2; // approved
-            policy.claims_processed = policy.claims_processed + 1;
-            policy.total_payouts = policy.total_payouts + claim.claim_amount;
-            
-            pool.pool_stats.approved_claims = pool.pool_stats.approved_claims + 1;
-            pool.pool_stats.total_payouts = pool.pool_stats.total_payouts + claim.claim_amount;
-        } else {
-            // Rejeter la réclamation
-            claim.status = 3; // rejected
-        };
-
-        // Émettre l'événement
-        event::emit(ClaimProcessed {
-            claim_id,
-            policy_id: claim.policy_id,
-            payout_amount: claim.claim_amount,
-            status: claim.status,
-        });
-    }
-
-    // ===== PARAMETRIC CALCULATIONS =====
 
     /// Calcule le paiement paramétrique
     fun calculate_parametric_payout(
         policy: &ParametricPolicy,
         weather_index: u64,
-        claim_type: u8
     ): u64 {
         if (weather_index < policy.trigger_threshold) {
             return 0
         };
 
-        let payout_percentage: u64;
-        
         if (weather_index >= policy.saturation_threshold) {
-            // Paiement complet
-            payout_percentage = 100
-        } else {
-            // Paiement proportionnel
-            let range = policy.saturation_threshold - policy.trigger_threshold;
-            let excess = weather_index - policy.trigger_threshold;
-            payout_percentage = (excess * 100) / range
+            return policy.coverage_amount
         };
 
-        (policy.coverage_amount * payout_percentage) / 100
+        // Paiement linéaire entre trigger et saturation
+        let range = policy.saturation_threshold - policy.trigger_threshold;
+        let excess = weather_index - policy.trigger_threshold;
+        (policy.coverage_amount * excess) / range
     }
 
-    /// Vérifie si les conditions paramétriques sont remplies
-    fun check_parametric_trigger(
-        policy: &ParametricPolicy,
-        weather_index: u64,
-        claim_type: u8
-    ): bool {
-        // Vérifier le type de produit
-        if (policy.product_type == PRODUCT_TYPE_SEASONAL) {
-            // Produit saisonnier : pluie cumulée
-            return weather_index >= policy.trigger_threshold
-        } else if (policy.product_type == PRODUCT_TYPE_EVENT) {
-            // Produit événementiel : pluie 24h
-            return weather_index >= policy.trigger_threshold
-        };
-
-        false
-    }
-
-    // ===== VIEW FUNCTIONS =====
-
-    /// Récupère les statistiques du pool
-    public fun get_pool_stats(pool: &ParametricInsurancePool): PoolStats {
-        pool.pool_stats
-    }
-
-    /// Récupère une police par ID
-    public fun get_policy(pool: &ParametricInsurancePool, policy_id: ID): &ParametricPolicy {
-        table::borrow(&pool.active_policies, policy_id)
-    }
-
-    /// Récupère une réclamation par ID
-    public fun get_claim(pool: &ParametricInsurancePool, claim_id: ID): &ParametricClaim {
-        table::borrow(&pool.pending_claims, claim_id)
-    }
-
-    /// Récupère les données météo d'un oracle
-    public fun get_weather_data(oracle_feed: &OracleFeed, timestamp: u64): &WeatherData {
-        table::borrow(&oracle_feed.weather_data, timestamp)
-    }
-
-    // ===== ADMIN FUNCTIONS =====
-
-    /// Ajoute un oracle feed autorisé
-    public fun add_authorized_oracle_feed(
+    /// Approuve et traite une réclamation
+    public fun process_claim(
         pool: &mut ParametricInsurancePool,
-        oracle_feed_id: ID,
+        claim_id: object::ID,
         admin_cap: &AdminCap,
         ctx: &mut TxContext
-    ) {
+    ): Coin<SUI> {
+        // Vérifier les permissions admin
         assert!(admin_cap.admin_address == tx_context::sender(ctx), ERR_INSUFFICIENT_FUNDS);
-        vec_set::insert(&mut pool.authorized_oracle_feeds, oracle_feed_id);
+
+        // Récupérer la réclamation
+        assert!(table::contains(&pool.pending_claims, claim_id), ERR_POLICY_NOT_FOUND);
+        let claim = table::remove(&mut pool.pending_claims, claim_id);
+        
+        // Vérifier le solde du pool
+        assert!(balance::value(&pool.balance) >= claim.claim_amount, ERR_INSUFFICIENT_FUNDS);
+
+        // Créer le paiement
+        let payout_balance = balance::split(&mut pool.balance, claim.claim_amount);
+        pool.pool_stats.total_payouts = pool.pool_stats.total_payouts + claim.claim_amount;
+
+        // Nettoyer la réclamation
+        let ParametricClaim { id, policy_id: _, claim_type: _, claim_amount: _, weather_index: _, claim_timestamp: _, status: _, payout_justification: _ } = claim;
+        object::delete(id);
+
+        coin::from_balance(payout_balance, ctx)
     }
 
-    /// Dépôt de fonds dans le pool
-    public fun deposit_funds(
+    /// Ajoute des fonds au pool
+    public fun add_liquidity(
         pool: &mut ParametricInsurancePool,
         payment: Coin<SUI>,
         admin_cap: &AdminCap,
         ctx: &mut TxContext
     ) {
         assert!(admin_cap.admin_address == tx_context::sender(ctx), ERR_INSUFFICIENT_FUNDS);
-        let balance = coin::into_balance(payment);
-        balance::join(&mut pool.total_balance, balance);
+        balance::join(&mut pool.balance, coin::into_balance(payment));
     }
 
-    /// Retrait de fonds du pool
-    public fun withdraw_funds(
+    /// Retire des fonds du pool
+    public fun withdraw_liquidity(
         pool: &mut ParametricInsurancePool,
         amount: u64,
         admin_cap: &AdminCap,
         ctx: &mut TxContext
     ): Coin<SUI> {
         assert!(admin_cap.admin_address == tx_context::sender(ctx), ERR_INSUFFICIENT_FUNDS);
-        let balance = balance::split(&mut pool.total_balance, amount);
+        let balance = balance::split(&mut pool.balance, amount);
         coin::from_balance(balance, ctx)
+    }
+
+    // ===== VIEW FUNCTIONS =====
+
+    /// Retourne les statistiques du pool
+    public fun get_pool_stats(pool: &ParametricInsurancePool): PoolStats {
+        pool.pool_stats
+    }
+
+    /// Retourne le solde du pool
+    public fun get_pool_balance(pool: &ParametricInsurancePool): u64 {
+        balance::value(&pool.balance)
+    }
+
+    /// Vérifie si une police existe
+    public fun policy_exists(pool: &ParametricInsurancePool, policy_id: object::ID): bool {
+        table::contains(&pool.active_policies, policy_id)
+    }
+
+    /// Retourne les détails d'une police
+    public fun get_policy_details(pool: &ParametricInsurancePool, policy_id: object::ID): (address, u8, u64, u64, u64, u64, u8) {
+        assert!(table::contains(&pool.active_policies, policy_id), ERR_POLICY_NOT_FOUND);
+        let policy = table::borrow(&pool.active_policies, policy_id);
+        (
+            policy.policyholder,
+            policy.product_type,
+            policy.coverage_amount,
+            policy.premium_paid,
+            policy.coverage_start,
+            policy.coverage_end,
+            policy.status
+        )
     }
 }

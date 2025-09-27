@@ -2,7 +2,6 @@
 import { useCurrentAccount } from "@mysten/dapp-kit";
 import { useState } from "react";
 import { InsuranceDashboard } from "./components/InsuranceDashboard";
-import { LandAssessmentFlow } from "./LandAssessmentFlow";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -23,7 +22,13 @@ function App() {
       <div className="container mx-auto p-6">
         <Card className="min-h-[500px]">
           <CardContent className="pt-6">
-            <LandAssessmentFlow />
+            <div className="text-center py-8">
+              <h2 className="text-2xl font-bold mb-4">Évaluation des terres</h2>
+              <p className="text-gray-600 mb-4">Cette fonctionnalité sera bientôt disponible.</p>
+              <Button asChild>
+                <a href="/field-specification">Spécifier mon champ</a>
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>

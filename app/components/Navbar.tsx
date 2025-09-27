@@ -20,9 +20,9 @@ const components: { title: string; href: string; description: string }[] = [
     description: "Accédez à votre tableau de bord d'assurance agricole.",
   },
   {
-    title: "Nouveau Contrat",
-    href: "/create",
-    description: "Souscrivez un nouveau contrat d'assurance indexé.",
+    title: "Souscrire une assurance",
+    href: "/insurance",
+    description: "Souscrivez une nouvelle police d'assurance agricole.",
   },
   {
     title: "Données Météo",

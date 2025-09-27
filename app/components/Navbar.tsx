@@ -20,14 +20,39 @@ const components: { title: string; href: string; description: string }[] = [
     description: "Accédez à votre tableau de bord d'assurance agricole.",
   },
   {
+    title: "Assurance Paramétrique",
+    href: "/parametric-insurance",
+    description: "Souscrivez une assurance paramétrique avec oracle Nautilus TEE.",
+  },
+  {
+    title: "Dashboard Paramétrique",
+    href: "/parametric-dashboard",
+    description: "Gérez vos polices paramétriques et surveillez les données oracle.",
+  },
+  {
     title: "Souscrire une assurance",
     href: "/insurance",
     description: "Souscrivez une nouvelle police d'assurance agricole.",
   },
   {
+    title: "Spécifier un champ",
+    href: "/field-specification",
+    description: "Définissez les spécifications de votre champ agricole.",
+  },
+  {
     title: "Données Météo",
     href: "/weather",
     description: "Consultez les données météo en temps réel.",
+  },
+  {
+    title: "Test Oracle",
+    href: "/oracle-test",
+    description: "Testez et vérifiez le fonctionnement de l'oracle Nautilus TEE.",
+  },
+  {
+    title: "Monitoring Oracle",
+    href: "/oracle-monitoring",
+    description: "Surveillez en temps réel les performances de l'oracle.",
   },
   {
     title: "À Propos",

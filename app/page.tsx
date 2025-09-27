@@ -15,7 +15,8 @@ import {
   TrendingUp,
   Users,
   CheckCircle,
-  AlertTriangle
+  AlertTriangle,
+  Calendar
 } from 'lucide-react';
 
 export default function HomePage() {
@@ -75,13 +76,15 @@ export default function HomePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild size="lg" className="bg-green-600 hover:bg-green-700 text-lg px-8 py-4">
-                <Link href="/field-specification">
+                <Link href="/parametric-insurance">
                   <Shield className="mr-2 h-5 w-5" />
-                  Souscrire une assurance
+                  Assurance Paramétrique
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="text-green-600 border-green-600 hover:bg-green-50 text-lg px-8 py-4">
-                En savoir plus
+              <Button asChild size="lg" variant="outline" className="text-green-600 border-green-600 hover:bg-green-50 text-lg px-8 py-4">
+                <Link href="/field-specification">
+                  Spécifier mon champ
+                </Link>
               </Button>
             </div>
           </div>
@@ -154,6 +157,95 @@ export default function HomePage() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* Assurance Paramétrique Section */}
+      <section className="py-16 bg-gradient-to-r from-blue-50 to-green-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h3 className="text-3xl font-bold text-gray-900 mb-4">
+              Assurance Paramétrique avec Oracle Nautilus TEE
+            </h3>
+            <p className="text-lg text-gray-600">
+              Protection automatique basée sur les données météo sécurisées
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Calendar className="mr-2 h-5 w-5 text-blue-600" />
+                  Assurance Saisonnière
+                </CardTitle>
+                <CardDescription>
+                  Protection basée sur la pluie cumulée sur une période
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                    Pluie cumulée sur la saison
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                    Seuil de déclenchement personnalisé
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                    Paiement proportionnel
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                    Couverture longue durée
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <CloudRain className="mr-2 h-5 w-5 text-red-600" />
+                  Assurance Événementielle
+                </CardTitle>
+                <CardDescription>
+                  Protection basée sur les événements météo extrêmes
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                    Pluie en 24h
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                    Déclenchement immédiat
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                    Paiement rapide
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                    Protection événements
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center mt-8">
+            <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
+              <Link href="/parametric-insurance">
+                <Shield className="mr-2 h-5 w-5" />
+                Découvrir l'assurance paramétrique
+              </Link>
+            </Button>
           </div>
         </div>
       </section>

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CreateInsuranceContract } from "../CreateInsuranceContract";
+import { InsuranceContractCreator } from "./InsuranceContractCreator";
 import { InsuranceContractList } from "./InsuranceContractList";
 import { WeatherData } from "./WeatherData";
 import { TrendingUp, Shield, Droplets, Wind, Thermometer } from "lucide-react";
@@ -42,7 +42,7 @@ export function InsuranceDashboard() {
   ];
 
   if (view === 'create') {
-    return <CreateInsuranceContract onBack={() => setView('dashboard')} />;
+    return <InsuranceContractCreator />;
   }
 
   if (view === 'contracts') {

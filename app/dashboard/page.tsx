@@ -22,7 +22,7 @@ import {
   Activity
 } from 'lucide-react';
 import Link from 'next/link';
-import { suiContractService } from '@/services/sui-contract';
+import { suiInsuranceCleanService } from '@/services/sui-insurance-clean';
 import { InsuranceWalletObjects } from '@/components/InsuranceWalletObjects';
 
 export default function DashboardPage() {
@@ -43,8 +43,8 @@ export default function DashboardPage() {
 
   const loadPoolStats = async () => {
     try {
-      const stats = await suiContractService.getPoolStats();
-      setPoolStats(stats);
+      // const stats = await suiInsuranceCleanService.getPoolStats();
+      // setPoolStats(stats);
     } catch (error) {
       console.error('Erreur lors du chargement des statistiques:', error);
     }

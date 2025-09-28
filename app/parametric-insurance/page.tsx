@@ -20,7 +20,7 @@ import {
   TrendingUp
 } from 'lucide-react';
 import Link from 'next/link';
-import { nautilusOracleService } from '@/services/nautilus-oracle';
+// import { nautilusOracleService } from '@/services/nautilus-oracle';
 
 export default function ParametricInsurancePage() {
   const [step, setStep] = useState(1);

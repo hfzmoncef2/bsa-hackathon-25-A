@@ -22,13 +22,13 @@ import {
   FileText
 } from 'lucide-react';
 import Link from 'next/link';
-import { useSuiContract } from '@/hooks/useSuiContract';
+// import { useSuiContract } from '@/hooks/useSuiContract';
 
 export default function FieldSpecificationPage() {
   const [step, setStep] = useState(1);
   const [isCreatingContract, setIsCreatingContract] = useState(false);
   const [contractCreated, setContractCreated] = useState(false);
-  const { createInsurancePolicy } = useSuiContract();
+  // const { createInsurancePolicy } = useSuiContract();
   
   const [fieldData, setFieldData] = useState({
     // Étape 1: Informations de base
@@ -158,15 +158,15 @@ export default function FieldSpecificationPage() {
     
     try {
       // Appel au service Sui pour créer le contrat
-      const result = await createInsurancePolicy(fieldData, totalPremium);
+      // const result = await createInsurancePolicy(fieldData, totalPremium);
       
-      console.log('Contrat créé avec succès:', result);
+      // console.log('Contrat créé avec succès:', result);
       
       // Stocker les informations du contrat
       localStorage.setItem('rainGuardContract', JSON.stringify({
-        policyId: result.policyId,
-        contractAddress: result.contractAddress,
-        transactionHash: result.transactionHash,
+        // policyId: result.policyId,
+        // contractAddress: result.contractAddress,
+        // transactionHash: result.transactionHash,
         fieldData,
         premium: totalPremium
       }));

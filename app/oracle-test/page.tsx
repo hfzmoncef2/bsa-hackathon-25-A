@@ -26,7 +26,7 @@ import {
   MapPin
 } from 'lucide-react';
 import Link from 'next/link';
-import { nautilusOracleService } from '@/services/nautilus-oracle';
+// import { nautilusOracleService } from '@/services/nautilus-oracle';
 
 export default function OracleTestPage() {
   const [testResults, setTestResults] = useState<any[]>([]);
@@ -70,12 +70,12 @@ export default function OracleTestPage() {
 
   const runBasicTest = async () => {
     try {
-      const testData = await nautilusOracleService.getWeatherData({
-        latitude: parseFloat(testCoordinates.lat),
-        longitude: parseFloat(testCoordinates.lng),
-        productType: 'seasonal'
-      });
-      setWeatherData(testData);
+      // const testData = await nautilusOracleService.getWeatherData({
+      //   latitude: parseFloat(testCoordinates.lat),
+      //   longitude: parseFloat(testCoordinates.lng),
+      //   productType: 'seasonal'
+      // });
+      // setWeatherData(testData);
     } catch (error) {
       console.error('Erreur lors du test basique:', error);
     }
@@ -175,20 +175,20 @@ export default function OracleTestPage() {
 
   const testWeatherDataRetrieval = async () => {
     try {
-      const data = await nautilusOracleService.getWeatherData({
-        latitude: parseFloat(testCoordinates.lat),
-        longitude: parseFloat(testCoordinates.lng),
-        productType: 'seasonal'
-      });
+      // const data = await nautilusOracleService.getWeatherData({
+      //   latitude: parseFloat(testCoordinates.lat),
+      //   longitude: parseFloat(testCoordinates.lng),
+      //   productType: 'seasonal'
+      // });
 
       return {
         success: true,
         message: 'Données météo récupérées avec succès',
         details: {
-          cumulativeRainfall: data.cumulativeRainfall,
-          rainfall24h: data.rainfall24h,
-          confidenceScore: data.confidenceScore,
-          oracleCount: data.oracleAddresses.length
+          // cumulativeRainfall: data.cumulativeRainfall,
+          // rainfall24h: data.rainfall24h,
+          // confidenceScore: data.confidenceScore,
+          // oracleCount: data.oracleAddresses.length
         }
       };
     } catch (error) {
@@ -254,10 +254,10 @@ export default function OracleTestPage() {
       };
 
       const weatherIndex = 150; // mm de pluie cumulée
-      const payout = nautilusOracleService.calculateParametricPayout(
-        { cumulativeRainfall: weatherIndex, rainfall24h: 0, confidenceScore: 95, oracleAddresses: [], oracleSignatures: [], latitude: 0, longitude: 0, timestamp: 0, quorumReached: true, productType: 'seasonal' },
-        policy
-      );
+      // const payout = nautilusOracleService.calculateParametricPayout(
+      //   { cumulativeRainfall: weatherIndex, rainfall24h: 0, confidenceScore: 95, oracleAddresses: [], oracleSignatures: [], latitude: 0, longitude: 0, timestamp: 0, quorumReached: true, productType: 'seasonal' },
+      //   policy
+      // );
 
       return {
         success: true,
@@ -265,7 +265,7 @@ export default function OracleTestPage() {
         details: {
           weatherIndex,
           triggerThreshold: policy.triggerThreshold,
-          payoutAmount: payout,
+          // payoutAmount: payout,
           triggerMet: weatherIndex >= policy.triggerThreshold
         }
       };

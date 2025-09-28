@@ -17,9 +17,9 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { 
-  suiInsuranceObjectsService, 
+  suiInsuranceCleanService, 
   InsurancePolicyObject 
-} from '@/services/sui-insurance-objects';
+} from '@/services/sui-insurance-clean';
 
 export function InsuranceWalletObjects() {
   const currentAccount = useCurrentAccount();
@@ -38,11 +38,11 @@ export function InsuranceWalletObjects() {
     setError(null);
 
     try {
-      const objects = await suiInsuranceObjectsService.getInsuranceObjects(
-        suiClient,
-        currentAccount
-      );
-      setInsuranceObjects(objects);
+      // const objects = await suiInsuranceCleanService.getInsuranceObjects(
+      //   suiClient,
+      //   currentAccount
+      // );
+      // setInsuranceObjects(objects);
     } catch (err) {
       console.error('Erreur lors du chargement des objets:', err);
       setError('Erreur lors du chargement des contrats d\'assurance');
@@ -159,7 +159,8 @@ export function InsuranceWalletObjects() {
                   <div className="flex items-center space-x-2">
                     {getRiskIcon(policy.riskType)}
                     <CardTitle className="text-lg">
-                      {suiInsuranceObjectsService.getRiskTypeLabel(policy.riskType)}
+                      {/* {suiInsuranceCleanService.getRiskTypeLabel(policy.riskType)} */}
+                      Risk Type {policy.riskType}
                     </CardTitle>
                   </div>
                   {getStatusBadge(policy.status)}

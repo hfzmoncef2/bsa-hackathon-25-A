@@ -1,1674 +1,1101 @@
-# Sui dApp Starter Template
+# 🌾 Parametric Agricultural Insurance Platform
 
-This dApp was created using `@mysten/create-dapp` that sets up a basic React
-Client dApp using the following tools:
+A comprehensive decentralized insurance platform built on Sui blockchain that provides automatic crop protection based on real-time weather data and parametric triggers.
 
-## 🚀 Getting Started from Scratch
+## 📋 Table of Contents
 
-This guide will help you set up and run this Sui dApp template from scratch, even if you're completely new to development.
+- [Overview](#overview)
+- [Features](#features)
+- [Architecture](#architecture)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage Guide](#usage-guide)
+- [API Documentation](#api-documentation)
+- [Smart Contracts](#smart-contracts)
+- [Weather Integration](#weather-integration)
+- [Security](#security)
+- [Deployment](#deployment)
+- [Testing](#testing)
+- [Monitoring](#monitoring)
+- [Contributing](#contributing)
+- [Troubleshooting](#troubleshooting)
+- [License](#license)
 
-### GitHub Codespaces Setup
+## 🌟 Overview
 
-This project includes a `.devcontainer` configuration for GitHub Codespaces that automatically sets up the correct Node.js and pnpm versions.
+This platform revolutionizes agricultural insurance by leveraging blockchain technology and real-time weather data to provide:
 
-**To use GitHub Codespaces:**
+- **Automatic Claims Processing**: No manual assessment required
+- **Real-time Weather Monitoring**: Oracle-based data integration
+- **Transparent Payouts**: Smart contract execution
+- **Global Coverage**: Support for any geographical location
+- **Parametric Insurance**: Payouts based on predefined weather thresholds
 
-1. **Open in Codespace**: Click the green "Code" button on GitHub → "Codespaces" → "Create codespace on main"
-2. **Wait for Setup**: The devcontainer will automatically:
-   - Install Node.js 18.12+
-   - Install pnpm latest version
-   - Install all project dependencies
-   - Set up VS Code extensions for optimal development
-3. **Start Development**: Once setup is complete, run `pnpm dev` to start the development server
+### 🎯 Key Benefits
 
-**Manual Setup (if not using Codespaces):**
+- **For Farmers**: Instant, transparent, and reliable crop protection
+- **For Insurers**: Reduced operational costs and fraud prevention
+- **For the Ecosystem**: Increased agricultural resilience and food security
+
+## 🚀 Features
+
+### Core Functionality
+- **🌤️ Real-time Weather Monitoring**: Oracle-based weather data integration
+- **📱 Smart Contract Integration**: Direct Sui blockchain integration
+- **🔄 Automatic Claims**: Parametric insurance with automatic payouts
+- **🌍 Global Coverage**: Support for any geographical location
+- **💼 User-friendly Interface**: Clean, modern web application
+- **📊 Dashboard Analytics**: Comprehensive monitoring and reporting
+- **🔐 Secure Transactions**: Blockchain-based security
+
+### Advanced Features
+- **🎯 Parametric Triggers**: Temperature, rainfall, humidity thresholds
+- **📈 Risk Assessment**: AI-powered risk evaluation
+- **🔄 Multi-Oracle Support**: Redundant data sources for reliability
+- **📱 Mobile Responsive**: Works on all devices
+- **🌐 Multi-language Support**: International accessibility
+- **📊 Historical Data**: Weather pattern analysis
+- **🔔 Real-time Alerts**: Instant notifications for critical conditions
+
+## 🏗️ Architecture
+
+### Frontend Stack
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Frontend Layer                           │
+├─────────────────────────────────────────────────────────────┤
+│  Next.js 15          │  TypeScript        │  Tailwind CSS  │
+│  React 18            │  Radix UI          │  Lucide Icons  │
+│  Sui dApp Kit        │  Zustand           │  React Query   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Backend Stack
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Backend Layer                            │
+├─────────────────────────────────────────────────────────────┤
+│  Sui Move Contracts  │  Weather Oracles   │  API Gateway   │
+│  Smart Contracts     │  Data Processing   │  Authentication│
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Blockchain Integration
+```
+┌─────────────────────────────────────────────────────────────┐
+│                  Sui Blockchain                            │
+├─────────────────────────────────────────────────────────────┤
+│  Insurance Policies  │  Policy Caps       │  Claim Objects │
+│  Weather Data        │  Oracle Feeds      │  Transactions  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Data Flow
+```
+Weather APIs → Oracle Service → Smart Contract → User Wallet
+     ↓              ↓              ↓              ↓
+Real-time Data → Processing → Validation → Payout
+```
+
+## 🛠️ Installation
 
 ### Prerequisites
 
-Before you begin, you'll need to install the following software on your computer:
+#### System Requirements
+- **Node.js**: Version 18.0.0 or higher
+- **pnpm**: Version 8.0.0 or higher
+- **Sui CLI**: Latest version
+- **Git**: Version 2.30.0 or higher
 
-#### 1. Node.js (Required)
-Node.js is a JavaScript runtime that allows you to run JavaScript applications on your computer.
+#### Development Tools
+- **VS Code**: Recommended IDE
+- **Sui Wallet**: Browser extension
+- **SuiScan**: Blockchain explorer access
 
-- **Download**: [https://nodejs.org/](https://nodejs.org/)
-- **Recommended Version**: LTS (Long Term Support) - currently v20.x or v22.x
-- **Installation**: Download the installer for your operating system and follow the setup wizard
+#### API Keys Required
+- **OpenWeatherMap**: Weather data API
+- **Sui Network**: Testnet/Mainnet access
 
-**Verify Installation:**
+### Step-by-Step Installation
+
+#### 1. Clone the Repository
 ```bash
-node --version
-npm --version
+git clone https://github.com/your-org/parametric-agricultural-insurance.git
+cd parametric-agricultural-insurance
 ```
 
-#### 2. pnpm (Package Manager)
-pnpm is a fast, disk space efficient package manager that we use for this project.
-
-**Install pnpm globally:**
+#### 2. Install Dependencies
 ```bash
-npm install -g pnpm
-```
-
-**Alternative installation methods:**
-- **Windows**: Download from [https://pnpm.io/installation](https://pnpm.io/installation)
-- **macOS**: `brew install pnpm` (if you have Homebrew)
-- **Linux**: `curl -fsSL https://get.pnpm.io/install.sh | sh -`
-
-**Verify Installation:**
-```bash
-pnpm --version
-```
-
-#### 3. Git (Version Control)
-Git is used to clone and manage the project code.
-
-- **Download**: [https://git-scm.com/downloads](https://git-scm.com/downloads)
-- **Installation**: Follow the installation guide for your operating system
-
-**Verify Installation:**
-```bash
-git --version
-```
-
-#### 4. Code Editor (Recommended)
-While not strictly required, a good code editor will make development much easier:
-
-- **Visual Studio Code**: [https://code.visualstudio.com/](https://code.visualstudio.com/) (Recommended)
-- **WebStorm**: [https://www.jetbrains.com/webstorm/](https://www.jetbrains.com/webstorm/)
-- **Sublime Text**: [https://www.sublimetext.com/](https://www.sublimetext.com/)
-
-### Installation Steps
-
-#### Step 1: Clone or Download the Project
-
-**Option A: Clone with Git (Recommended)**
-```bash
-git clone <repository-url>
-cd bsa-2025-frontend-template
-```
-
-**Option B: Download ZIP**
-1. Download the project as a ZIP file
-2. Extract it to your desired location
-3. Open terminal/command prompt in the project folder
-
-#### Step 2: Install Dependencies
-Navigate to the project directory and install all required packages:
-
-```bash
+# Install Node.js dependencies
 pnpm install
+
+# Install Sui CLI (if not already installed)
+cargo install --locked --git https://github.com/MystenLabs/sui.git --tag main sui
 ```
 
-This command will:
-- Download all necessary packages listed in `package.json`
-- Create a `node_modules` folder with all dependencies
-- Generate a `pnpm-lock.yaml` file to lock dependency versions
-
-#### Step 3: Set Up Environment (Optional)
-If you plan to deploy your own smart contracts, you'll need:
-
-1. **Sui CLI**: Follow the [Sui installation guide](https://docs.sui.io/build/install)
-2. **Wallet**: Install a Sui wallet like [Sui Wallet](https://chrome.google.com/webstore/detail/sui-wallet/opcgpfmipidbgpenhmajoajpbobppdil)
-
-### Running the Project
-
-#### Development Mode
-Start the development server with hot reload:
-
+#### 3. Environment Setup
 ```bash
-pnpm dev
+# Copy environment template
+cp app/api/env.example app/api/.env
+
+# Edit environment variables
+nano app/api/.env
 ```
 
-This will:
-- Start the Next.js development server
-- Open your browser to `http://localhost:3000`
-- Automatically reload when you make changes to the code
-
-#### Production Build
-To build the project for production:
-
+#### 4. Sui Network Configuration
 ```bash
-pnpm build
-```
-
-#### Start Production Server
-After building, start the production server:
-
-```bash
-pnpm start
-```
-
-### Troubleshooting Common Issues
-
-#### "Command not found" errors
-- Make sure Node.js and pnpm are properly installed
-- Restart your terminal after installation
-- Check your PATH environment variable
-
-#### Port already in use
-If port 3000 is busy, the development server will automatically use the next available port (3001, 3002, etc.)
-
-#### Permission errors on macOS/Linux
-You might need to use `sudo` for global installations:
-```bash
-sudo npm install -g pnpm
-```
-
-#### Windows PowerShell execution policy
-If you get execution policy errors on Windows:
-```powershell
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-
-### Next Steps
-
-Once you have the project running:
-
-1. **Explore the Code**: Look at the files in the `app/` directory
-2. **Connect a Wallet**: Use the "Connect Wallet" button to connect your Sui wallet
-3. **Try the Counter**: Create and interact with counter objects
-4. **Read the Documentation**: Continue reading this README for advanced features
-
----
-
-- [React](https://react.dev/) (v19.1.1) as the UI framework
-- [Next.js](https://nextjs.org/) (v15.5.3) for the React framework with SSR support
-- [TypeScript](https://www.typescriptlang.org/) (v5.9.2) for type checking
-- [Tailwind CSS](https://tailwindcss.com/) (v4.1.13) for styling
-- [ShadCN UI](https://ui.shadcn.com/) for pre-built accessible UI components
-- [ESLint](https://eslint.org/) (v9.17.0) for linting
-- [`@mysten/dapp-kit`](https://sdk.mystenlabs.com/dapp-kit) (v0.18.0) for connecting to wallets and loading data
-- [`@mysten/sui`](https://www.npmjs.com/package/@mysten/sui) (v1.38.0) for Sui blockchain interactions
-- [React Query](https://tanstack.com/query) (v5.87.1) for data fetching and caching
-- [pnpm](https://pnpm.io/) for package management
-
-## Key Dependencies
-
-### Core Framework
-- **React**: v19.1.1 - The main UI library
-- **Next.js**: v15.5.3 - React framework with SSR, routing, and build optimization
-- **TypeScript**: v5.9.2 - Type safety and better development experience
-
-### Sui Integration
-- **@mysten/dapp-kit**: v0.18.0 - Wallet connection and dApp utilities
-- **@mysten/sui**: v1.38.0 - Sui SDK for blockchain interactions
-- **@tanstack/react-query**: v5.87.1 - Data fetching and state management
-
-### UI Components
-- **@shadcn**:Accessible navigation components
-- **Tailwind CSS**: v4.1.13 - Utility-first CSS framework
-- **tailwindcss-animate**: v1.0.7 - Animation utilities
-- **lucide-react**: v0.544.0 - Icon library
-- **react-spinners**: v0.14.1 - Loading spinners
-
-### Utilities
-- **class-variance-authority**: v0.7.1 - Component variant management
-- **clsx**: v2.1.1 - Conditional className utility
-- **tailwind-merge**: v3.3.1 - Tailwind class merging utility
-
-For a full guide on how to build this dApp from scratch, visit this
-[guide](http://docs.sui.io/guides/developer/app-examples/e2e-counter#frontend).
-
-## 🔗 Understanding Smart Contract Integration
-
-### What are Smart Contracts and How Do They Work?
-
-Before diving into deployment, let's understand what's happening behind the scenes:
-
-#### **Smart Contracts Explained (For Beginners)**
-
-Think of a smart contract as a **program that lives on the blockchain**. Unlike traditional applications that run on servers, smart contracts:
-
-1. **Live on the Blockchain**: Once deployed, the code is stored permanently on the Sui blockchain
-2. **Are Immutable**: The code cannot be changed after deployment (ensuring trust and security)
-3. **Execute Automatically**: They run exactly as programmed, without human intervention
-4. **Are Transparent**: Anyone can verify what the code does
-
-#### **The Frontend ↔ Smart Contract Connection**
-
-Here's how your React frontend communicates with smart contracts:
-
-```
-┌─────────────────┐    ┌──────────────┐    ┌─────────────────────┐
-│   Your React    │    │     Sui      │    │   Smart Contract    │
-│   Frontend      │◄──►│   Network    │◄──►│   (on Blockchain)   │
-│  (This Project) │    │              │    │                     │
-└─────────────────┘    └──────────────┘    └─────────────────────┘
-```
-
-**Step-by-Step Process:**
-
-1. **User clicks a button** in your React app (e.g., "Create Counter")
-2. **Frontend creates a transaction** using the Sui SDK
-3. **Transaction is sent** to the Sui network via your wallet
-4. **Smart contract executes** the requested function on the blockchain
-5. **Result is returned** to your frontend and displayed to the user
-
-#### **Why Deploy to Testnet First?**
-
-- **Testnet** = Practice blockchain (free, safe for testing)
-- **Mainnet** = Real blockchain (costs real money, permanent)
-
-Always test on testnet before going to mainnet!
-
----
-
-## 📦 Deploying Your Smart Contracts
-
-### Step 1: Install Sui CLI
-
-The Sui CLI is a command-line tool that lets you interact with the Sui blockchain. Think of it as your "control panel" for deploying and managing smart contracts.
-
-**Download and Install:**
-- **Official Guide**: [https://docs.sui.io/build/install](https://docs.sui.io/build/install)
-- **Quick Install (Linux/macOS)**: 
-  ```bash
-  curl -fLJO https://github.com/MystenLabs/sui/releases/latest/download/sui-mainnet-v1.38.0-ubuntu-x86_64.tgz
-  tar -xf sui-mainnet-v1.38.0-ubuntu-x86_64.tgz
-  sudo mv sui /usr/local/bin
-  ```
-
-**Verify Installation:**
-```bash
-sui --version
-```
-
-### Step 2: Set Up Testnet Environment
-
-The testnet is a "practice" version of the Sui blockchain where you can test your smart contracts without spending real money.
-
-**Configure Testnet:**
-```bash
-# Add testnet environment
-sui client new-env --alias testnet --rpc https://fullnode.testnet.sui.io:443
-
-# Switch to testnet
+# Configure Sui CLI
+sui client new-address ed25519
 sui client switch --env testnet
+
+# Get testnet SUI tokens
+sui client faucet
 ```
 
-**Create a New Wallet Address:**
+#### 5. Deploy Smart Contracts
 ```bash
-# Generate a new address
-sui client new-address secp256k1
+# Make deployment script executable
+chmod +x deploy-insurance.sh
+
+# Deploy to testnet
+./deploy-insurance.sh
 ```
 
-This will output something like:
-```
-Created new keypair and saved it to keystore.
-- Address: 0x1234567890abcdef...
-- Alias: <none>
-```
-
-**Set Your Active Address:**
+#### 6. Start Development Server
 ```bash
-# Replace with your actual address from above
-sui client switch --address 0x1234567890abcdef...
-```
-
-### Step 3: Get Test SUI Tokens
-
-To deploy smart contracts, you need SUI tokens to pay for "gas" (transaction fees). On testnet, these are free!
-
-**Get Free Testnet SUI:**
-1. Visit: [https://faucet.sui.io](https://faucet.sui.io)
-2. Enter your wallet address (from Step 2)
-3. Click "Request SUI"
-4. Wait a few seconds for the tokens to arrive
-
-**Check Your Balance:**
-```bash
-sui client balance
-```
-
-### Step 4: Deploy Your Smart Contract
-
-Now comes the exciting part - putting your smart contract on the blockchain!
-
-**Navigate to the Move Code:**
-```bash
-cd move
-```
-
-**Deploy the Counter Smart Contract:**
-```bash
-sui client publish --gas-budget 100000000 counter
-```
-
-**What This Command Does:**
-- `publish`: Tells Sui to deploy your smart contract
-- `--gas-budget 100000000`: Sets the maximum gas you're willing to pay
-- `counter`: The name of your Move package (folder)
-
-**Understanding the Output:**
-
-After deployment, you'll see a lot of output. Look for something like this:
-
-```json
-{
-  "packageId": "0xcea82fb908b9d9566b1c7977491e76901ed167978a1ecd6053a994881c0ea9b5",
-  "version": "1",
-  "digest": "...",
-  "modules": ["counter"],
-  ...
-}
-```
-
-**🎯 IMPORTANT**: Copy the `packageId` value - you'll need it in the next step!
-
-### Step 5: Configure Your Frontend
-
-This is where the magic happens - connecting your React app to your deployed smart contract.
-
-#### **Understanding the Constants File**
-
-Open <mcfile name="constants.ts" path="/home/Loris/BSA/bsa-2025-frontend-template/app/constants.ts"></mcfile> in your code editor. You'll see:
-
-```typescript
-export const DEVNET_COUNTER_PACKAGE_ID = "0xTODO";
-export const TESTNET_COUNTER_PACKAGE_ID = "0xcea82fb908b9d9566b1c7977491e76901ed167978a1ecd6053a994881c0ea9b5";
-export const MAINNET_COUNTER_PACKAGE_ID = "0xTODO";
-```
-
-**What These Mean:**
-
-- **DEVNET**: Local development network (for advanced users)
-- **TESTNET**: Practice network (what you just deployed to)
-- **MAINNET**: Real network (costs real money)
-
-#### **Update Your Package ID**
-
-Replace the `TESTNET_COUNTER_PACKAGE_ID` with your actual package ID from Step 4:
-
-```typescript
-export const TESTNET_COUNTER_PACKAGE_ID = "0xYOUR_ACTUAL_PACKAGE_ID_HERE";
-```
-
-**Example:**
-```typescript
-export const TESTNET_COUNTER_PACKAGE_ID = "0xcea82fb908b9d9566b1c7977491e76901ed167978a1ecd6053a994881c0ea9b5";
-```
-
-#### **How the Frontend Uses This ID**
-
-Your React components use this package ID to know which smart contract to interact with:
-
-```typescript
-// In your React components
-const counterPackageId = useNetworkVariable("counterPackageId");
-
-// When calling smart contract functions
-tx.moveCall({
-  target: `${counterPackageId}::counter::create`, // This becomes: 0xYOUR_ID::counter::create
-  arguments: [],
-});
-```
-
-**The Connection Process:**
-
-1. **User clicks "Create Counter"** in your React app
-2. **Frontend reads the package ID** from constants.ts
-3. **Creates a transaction** targeting your specific smart contract
-4. **Sends transaction** to the Sui testnet
-5. **Your deployed smart contract** executes the function
-6. **Result is returned** and displayed in your app
-
-### Step 6: Test Your Integration
-
-Now let's make sure everything works!
-
-**Start Your Development Server:**
-```bash
-# Make sure you're in the project root directory
-cd ..  # if you're still in the move/ folder
+# Start the application
 pnpm dev
+
+# Application will be available at http://localhost:3000
 ```
 
-**Test the Connection:**
+## ⚙️ Configuration
 
-1. **Open your browser** to `http://localhost:3000`
-2. **Connect your wallet** (install Sui Wallet browser extension if needed)
-3. **Switch your wallet to testnet** (in wallet settings)
-4. **Try creating a counter** - click the "Create Counter" button
-5. **Interact with the counter** - increment, reset, etc.
+### Environment Variables
 
-**What's Happening Behind the Scenes:**
+#### Required Variables
+```env
+# Sui Network Configuration
+SUI_NETWORK=testnet
+SUI_RPC_URL=https://fullnode.testnet.sui.io:443
 
-```
-Your React App → Sui Wallet → Testnet → Your Smart Contract → Back to Your App
-```
+# Weather API Configuration
+OPENWEATHER_API_KEY=your_api_key_here
+WEATHER_CACHE_DURATION=300000
 
-### Troubleshooting Common Issues
-
-#### **"Package not found" Error**
-- Double-check your package ID in constants.ts
-- Make sure you're connected to testnet (not mainnet or devnet)
-
-#### **"Insufficient gas" Error**
-- Get more testnet SUI from the faucet
-- Check your wallet balance: `sui client balance`
-
-#### **"Object not found" Error**
-- Make sure you've created a counter object first
-- Check that you're using the correct object ID
-
-#### **Wallet Connection Issues**
-- Install the Sui Wallet browser extension
-- Make sure your wallet is set to testnet
-- Refresh the page and try reconnecting
-
-### Understanding the Complete Flow
-
-Here's what happens when you click "Create Counter":
-
-1. **Frontend** (React) creates a transaction
-2. **Wallet** signs the transaction with your private key
-3. **Transaction** is sent to Sui testnet
-4. **Validators** on the network verify and execute the transaction
-5. **Smart contract** runs the `create` function
-6. **New counter object** is created on the blockchain
-7. **Object ID** is returned to your frontend
-8. **UI updates** to show the new counter
-
-This is the power of blockchain - your data is now stored permanently and securely on a decentralized network!
-
-## Understanding the Constants.ts Configuration
-
-The <mcfile name="constants.ts" path="/home/Loris/BSA/bsa-2025-frontend-template/app/constants.ts"></mcfile> file is the bridge between your frontend and your deployed smart contracts. Let's break down exactly how it works and why it's crucial.
-
-### What Are Package IDs?
-
-When you deploy a smart contract to the Sui blockchain, it gets assigned a unique **Package ID**. Think of this as the "address" where your smart contract lives on the blockchain. Just like how your house has a unique address, your smart contract has a unique Package ID.
-
-**Example Package ID:**
-```
-0xcea82fb908b9d9566b1c7977491e76901ed167978a1ecd6053a994881c0ea9b5
+# Application Configuration
+NEXT_PUBLIC_APP_NAME=Parametric Agricultural Insurance
+NEXT_PUBLIC_APP_VERSION=1.0.0
 ```
 
-This long hexadecimal string uniquely identifies your deployed smart contract among millions of others on the network.
+#### Optional Variables
+```env
+# Analytics
+GOOGLE_ANALYTICS_ID=GA_MEASUREMENT_ID
+MIXPANEL_TOKEN=your_mixpanel_token
 
-## Creating Your Own Smart Contract
+# Monitoring
+SENTRY_DSN=your_sentry_dsn
+LOG_LEVEL=info
 
-Ready to move beyond the counter example? Here's how to create your own custom smart contract and integrate it with your frontend.
+# Feature Flags
+ENABLE_ANALYTICS=true
+ENABLE_MONITORING=true
+ENABLE_DEBUG_MODE=false
+```
 
-### Step 1: Understanding the Move Code Structure
+### Network Configuration
 
-First, let's look at the current counter smart contract to understand the structure:
+#### Testnet Configuration
+```typescript
+// app/networkConfig.ts
+export const testnetConfig = {
+  rpcUrl: 'https://fullnode.testnet.sui.io:443',
+  faucetUrl: 'https://faucet.testnet.sui.io/gas',
+  explorerUrl: 'https://suiscan.xyz/testnet',
+  packageId: '0x...', // Your deployed package ID
+};
+```
 
-**File: `move/counter/sources/counter.move`**
+#### Mainnet Configuration
+```typescript
+export const mainnetConfig = {
+  rpcUrl: 'https://fullnode.mainnet.sui.io:443',
+  explorerUrl: 'https://suiscan.xyz/mainnet',
+  packageId: '0x...', // Your deployed package ID
+};
+```
 
-```move
-module counter::counter {
-    use sui::object::{Self, UID};
-    use sui::transfer;
-    use sui::tx_context::{Self, TxContext};
+### Weather API Setup
 
-    /// A counter object
-    public struct Counter has key {
-        id: UID,
-        value: u64,
-    }
+#### OpenWeatherMap Configuration
+1. **Create Account**: Sign up at [OpenWeatherMap](https://openweathermap.org/api)
+2. **Get API Key**: Generate your API key
+3. **Configure Service**: Update `app/services/real-weather-api.ts`
 
-    /// Create a new counter
-    public fun create(ctx: &mut TxContext) {
-        let counter = Counter {
-            id: object::new(ctx),
-            value: 0,
-        };
-        transfer::share_object(counter);
-    }
+```typescript
+const API_KEY = process.env.OPENWEATHER_API_KEY;
+const BASE_URL = 'https://api.openweathermap.org/data/2.5';
+```
 
-    /// Increment the counter
-    public fun increment(counter: &mut Counter) {
-        counter.value = counter.value + 1;
-    }
+#### Alternative Weather Providers
+- **WeatherAPI**: Backup weather data source
+- **AccuWeather**: Premium weather data
+- **Custom Oracle**: Your own weather data source
+
+## 📖 Usage Guide
+
+### For Farmers
+
+#### 1. Getting Started
+1. **Connect Wallet**: Install Sui wallet extension
+2. **Fund Account**: Ensure you have SUI tokens
+3. **Access Platform**: Navigate to the application
+
+#### 2. Creating an Insurance Policy
+
+##### Step 1: Basic Information
+```
+Coverage Amount: 1000 SUI
+Monthly Premium: 100 SUI
+Field Location: GPS coordinates
+```
+
+##### Step 2: Weather Thresholds
+```
+Maximum Temperature: 35°C
+Minimum Temperature: 5°C
+Maximum Rainfall: 50mm
+Humidity Range: 30% - 80%
+```
+
+##### Step 3: Review and Create
+- Review all parameters
+- Confirm weather conditions
+- Sign transaction
+- Policy created on blockchain
+
+#### 3. Monitoring Your Policy
+- **Dashboard**: View all policies
+- **Weather Data**: Real-time conditions
+- **Claim Status**: Automatic processing
+- **Transaction History**: Blockchain records
+
+### For Developers
+
+#### API Integration
+```typescript
+import { suiInsuranceCleanService } from '@/services/sui-insurance-clean';
+
+// Create insurance policy
+const result = await suiInsuranceCleanService.createInsuranceObject(
+  coverageAmount,
+  premiumAmount,
+  riskType,
+  maxTemperature,
+  minTemperature,
+  maxRainfall,
+  minHumidity,
+  maxHumidity,
+  locationLat,
+  locationLng,
+  signAndExecute,
+  currentAccount
+);
+```
+
+#### Weather Data Integration
+```typescript
+import { unifiedWeatherService } from '@/services/unified-weather-service';
+
+// Get current weather
+const weather = await unifiedWeatherService.getCurrentWeather(lat, lng);
+
+// Check conditions
+const conditions = unifiedWeatherService.checkWeatherConditions(
+  weather,
+  thresholds
+);
+```
+
+## 📚 API Documentation
+
+### Core Services
+
+#### SuiInsuranceCleanService
+```typescript
+class SuiInsuranceCleanService {
+  // Set contract package ID
+  setPackageId(packageId: string): void
+  
+  // Create insurance object
+  createInsuranceObject(
+    coverageAmount: number,
+    premiumAmount: number,
+    riskType: number,
+    maxTemperature: number,
+    minTemperature: number,
+    maxRainfall: number,
+    minHumidity: number,
+    maxHumidity: number,
+    locationLat: number,
+    locationLng: number,
+    signAndExecute: any,
+    currentAccount: any
+  ): Promise<{policyObject: InsurancePolicyObject, capObject: PolicyCapObject}>
+  
+  // Check deployment status
+  isDeployed(): boolean
+  
+  // Get package ID
+  getPackageId(): string | null
 }
 ```
 
-**Key Components:**
-- **Module Declaration**: `module counter::counter` defines the module name
-- **Struct Definition**: `Counter` is the main data structure
-- **Functions**: `create()` and `increment()` are the public functions you can call
-
-### Step 2: Create Your Custom Smart Contract
-
-Let's create a simple **Task Manager** smart contract as an example:
-
-**File: `move/task_manager/sources/task_manager.move`**
-
-```move
-module task_manager::task_manager {
-    use sui::object::{Self, UID};
-    use sui::transfer;
-    use sui::tx_context::{Self, TxContext};
-    use std::string::{Self, String};
-    use std::vector;
-
-    /// A task list object
-    public struct TaskList has key {
-        id: UID,
-        tasks: vector<Task>,
-        owner: address,
-    }
-
-    /// Individual task structure
-    public struct Task has store, copy, drop {
-        id: u64,
-        title: String,
-        completed: bool,
-    }
-
-    /// Create a new task list
-    public fun create_task_list(ctx: &mut TxContext) {
-        let task_list = TaskList {
-            id: object::new(ctx),
-            tasks: vector::empty<Task>(),
-            owner: tx_context::sender(ctx),
-        };
-        transfer::transfer(task_list, tx_context::sender(ctx));
-    }
-
-    /// Add a new task
-    public fun add_task(
-        task_list: &mut TaskList, 
-        title: String, 
-        ctx: &mut TxContext
-    ) {
-        assert!(task_list.owner == tx_context::sender(ctx), 0);
-        
-        let task = Task {
-            id: vector::length(&task_list.tasks),
-            title,
-            completed: false,
-        };
-        vector::push_back(&mut task_list.tasks, task);
-    }
-
-    /// Mark task as completed
-    public fun complete_task(
-        task_list: &mut TaskList, 
-        task_id: u64, 
-        ctx: &mut TxContext
-    ) {
-        assert!(task_list.owner == tx_context::sender(ctx), 0);
-        
-        let task = vector::borrow_mut(&mut task_list.tasks, task_id);
-        task.completed = true;
-    }
-
-    /// Get task count
-    public fun get_task_count(task_list: &TaskList): u64 {
-        vector::length(&task_list.tasks)
-    }
+#### UnifiedWeatherService
+```typescript
+class UnifiedWeatherService {
+  // Get current weather data
+  getCurrentWeather(lat: number, lng: number): Promise<WeatherData>
+  
+  // Check weather conditions
+  checkWeatherConditions(
+    weatherData: WeatherData,
+    thresholds: WeatherThresholds
+  ): {shouldClaim: boolean, reason: string, claimAmount: number}
+  
+  // Get critical weather data
+  getCriticalWeatherData(lat: number, lng: number): WeatherData
+  
+  // Get normal weather data
+  getNormalWeatherData(lat: number, lng: number): WeatherData
+  
+  // Clear cache
+  clearCache(): void
 }
 ```
 
-**What's Different:**
-- **Multiple Functions**: `create_task_list()`, `add_task()`, `complete_task()`
-- **Complex Data**: Uses vectors and custom structs
-- **Access Control**: Only the owner can modify tasks
-- **String Handling**: Tasks have titles
+### Data Types
 
-### Step 3: Update Your Move.toml Configuration
-
-**File: `move/task_manager/Move.toml`**
-
-```toml
-[package]
-name = "task_manager"
-version = "1.0.0"
-edition = "2024.beta"
-
-[dependencies]
-Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/testnet" }
-
-[addresses]
-task_manager = "0x0"
-```
-
-**Key Changes:**
-- **Package Name**: Changed from "counter" to "task_manager"
-- **Module Address**: Updated to match your module name
-
-### Step 4: Deploy Your Custom Smart Contract
-
-**Navigate to Your Move Directory:**
-```bash
-cd move/task_manager
-```
-
-**Deploy to Testnet:**
-```bash
-sui client publish --gas-budget 100000000 .
-```
-
-**Save Your Package ID:**
-After deployment, copy the `packageId` from the output and update your constants:
-
+#### InsurancePolicyObject
 ```typescript
-// In constants.ts
-export const TESTNET_TASK_MANAGER_PACKAGE_ID = "0xYOUR_NEW_PACKAGE_ID";
+interface InsurancePolicyObject {
+  objectId: string;
+  policyId: string;
+  clientAddress: string;
+  coverageAmount: number;
+  premiumAmount: number;
+  riskType: number;
+  status: number;
+  createdAt: number;
+  maxTemperature: number;
+  minTemperature: number;
+  maxRainfall: number;
+  minHumidity: number;
+  maxHumidity: number;
+  locationLat: number;
+  locationLng: number;
+  claimAmount: number;
+}
 ```
 
-### Step 5: Update Frontend Configuration
-
-**File: `app/constants.ts`**
-
+#### WeatherData
 ```typescript
-// Keep the counter package ID
-export const TESTNET_COUNTER_PACKAGE_ID = "0xcea82fb908b9d9566b1c7977491e76901ed167978a1ecd6053a994881c0ea9b5";
-
-// Add your new package ID
-export const TESTNET_TASK_MANAGER_PACKAGE_ID = "0xYOUR_NEW_PACKAGE_ID";
-```
-
-**File: `app/networkConfig.ts`**
-
-```typescript
-import { getFullnodeUrl } from "@mysten/sui/client";
-import { createNetworkConfig } from "@mysten/dapp-kit";
-import { 
-  TESTNET_COUNTER_PACKAGE_ID, 
-  TESTNET_TASK_MANAGER_PACKAGE_ID 
-} from "./constants";
-
-const { networkConfig, useNetworkVariable, useNetworkVariables } =
-  createNetworkConfig({
-    testnet: {
-      url: getFullnodeUrl("testnet"),
-      variables: {
-        counterPackageId: TESTNET_COUNTER_PACKAGE_ID,
-        taskManagerPackageId: TESTNET_TASK_MANAGER_PACKAGE_ID, // Add this line
-      },
-    },
-    mainnet: {
-      url: getFullnodeUrl("mainnet"),
-      variables: {
-        counterPackageId: "0xTODO",
-        taskManagerPackageId: "0xTODO", // Add this line
-      },
-    },
-  });
-
-export { networkConfig, useNetworkVariable, useNetworkVariables };
-```
-
-### Step 6: Create Frontend Components
-
-**File: `app/TaskManager.tsx`**
-
-```typescript
-import { useState } from "react";
-import { Transaction } from "@mysten/sui/transactions";
-import { useSignAndExecuteTransaction, useSuiClient, useSuiClientQuery } from "@mysten/dapp-kit";
-import { useNetworkVariable } from "./networkConfig";
-import { Button } from "./components/ui/button";
-import { Input } from "./components/ui/input";
-
-export function TaskManager({ taskListId }: { taskListId?: string }) {
-  const taskManagerPackageId = useNetworkVariable("taskManagerPackageId");
-  const suiClient = useSuiClient();
-  const { mutate: signAndExecute } = useSignAndExecuteTransaction();
-  const [newTaskTitle, setNewTaskTitle] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Fetch task list data
-  const { data: taskListData, refetch } = useSuiClientQuery(
-    "getObject",
-    {
-      id: taskListId!,
-      options: { showContent: true },
-    },
-    { enabled: !!taskListId }
-  );
-
-  // Create new task list
-  const createTaskList = () => {
-    setIsLoading(true);
-    const tx = new Transaction();
-
-    tx.moveCall({
-      arguments: [],
-      target: `${taskManagerPackageId}::task_manager::create_task_list`,
-    });
-
-    signAndExecute(
-      { transaction: tx },
-      {
-        onSuccess: async ({ digest }) => {
-          const { effects } = await suiClient.waitForTransaction({
-            digest,
-            options: { showEffects: true },
-          });
-          
-          const createdObjectId = effects?.created?.[0]?.reference?.objectId;
-          console.log("Task list created:", createdObjectId);
-          setIsLoading(false);
-        },
-        onError: () => setIsLoading(false),
-      }
-    );
+interface WeatherData {
+  temperature: number;
+  rainfall: number;
+  humidity: number;
+  location: {
+    lat: number;
+    lng: number;
   };
+  timestamp: number;
+  description?: string;
+}
+```
 
-  // Add new task
-  const addTask = () => {
-    if (!newTaskTitle.trim() || !taskListId) return;
+## 🔗 Smart Contracts
+
+### Insurance Contract Structure
+
+#### Main Contract: `insurance.move`
+```move
+module 0x0::insurance {
+    // Insurance Policy struct
+    struct InsurancePolicy has key, store {
+        id: UID,
+        policy_id: ID,
+        client_address: address,
+        coverage_amount: u64,
+        premium_amount: u64,
+        risk_type: u8,
+        status: u8,
+        created_at: u64,
+        max_temperature: u64,
+        min_temperature: u64,
+        max_rainfall: u64,
+        min_humidity: u64,
+        max_humidity: u64,
+        location_lat: u64,
+        location_lng: u64,
+        claim_amount: u64,
+    }
     
-    setIsLoading(true);
-    const tx = new Transaction();
-
-    tx.moveCall({
-      arguments: [
-        tx.object(taskListId),
-        tx.pure.string(newTaskTitle),
-      ],
-      target: `${taskManagerPackageId}::task_manager::add_task`,
-    });
-
-    signAndExecute(
-      { transaction: tx },
-      {
-        onSuccess: async ({ digest }) => {
-          await suiClient.waitForTransaction({ digest });
-          await refetch();
-          setNewTaskTitle("");
-          setIsLoading(false);
-        },
-        onError: () => setIsLoading(false),
-      }
-    );
-  };
-
-  // Complete task
-  const completeTask = (taskId: number) => {
-    if (!taskListId) return;
-    
-    setIsLoading(true);
-    const tx = new Transaction();
-
-    tx.moveCall({
-      arguments: [
-        tx.object(taskListId),
-        tx.pure.u64(taskId),
-      ],
-      target: `${taskManagerPackageId}::task_manager::complete_task`,
-    });
-
-    signAndExecute(
-      { transaction: tx },
-      {
-        onSuccess: async ({ digest }) => {
-          await suiClient.waitForTransaction({ digest });
-          await refetch();
-          setIsLoading(false);
-        },
-        onError: () => setIsLoading(false),
-      }
-    );
-  };
-
-  // Parse task list data
-  const getTaskListFields = (data: any) => {
-    if (data?.content?.dataType !== "moveObject") return null;
-    return data.content.fields as {
-      tasks: Array<{ id: string; title: string; completed: boolean }>;
-      owner: string;
-    };
-  };
-
-  const taskListFields = taskListData ? getTaskListFields(taskListData) : null;
-
-  if (!taskListId) {
-    return (
-      <div className="p-4">
-        <h2 className="text-xl font-bold mb-4">Task Manager</h2>
-        <Button onClick={createTaskList} disabled={isLoading}>
-          {isLoading ? "Creating..." : "Create Task List"}
-        </Button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">My Tasks</h2>
-      
-      {/* Add new task */}
-      <div className="flex gap-2 mb-4">
-        <Input
-          value={newTaskTitle}
-          onChange={(e) => setNewTaskTitle(e.target.value)}
-          placeholder="Enter task title..."
-          onKeyPress={(e) => e.key === "Enter" && addTask()}
-        />
-        <Button onClick={addTask} disabled={isLoading || !newTaskTitle.trim()}>
-          Add Task
-        </Button>
-      </div>
-
-      {/* Task list */}
-      <div className="space-y-2">
-        {taskListFields?.tasks.map((task, index) => (
-          <div
-            key={index}
-            className={`flex items-center justify-between p-3 border rounded ${
-              task.completed ? "bg-green-50 text-green-800" : "bg-white"
-            }`}
-          >
-            <span className={task.completed ? "line-through" : ""}>
-              {task.title}
-            </span>
-            {!task.completed && (
-              <Button
-                size="sm"
-                onClick={() => completeTask(parseInt(task.id))}
-                disabled={isLoading}
-              >
-                Complete
-              </Button>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {taskListFields?.tasks.length === 0 && (
-        <p className="text-gray-500 text-center py-8">
-          No tasks yet. Add your first task above!
-        </p>
-      )}
-    </div>
-  );
-}
-```
-
-### General Steps for Any Custom Smart Contract
-
-#### **1. Plan Your Smart Contract**
-- **Define your data structures** (what objects will you store?)
-- **List the functions** you need (create, update, delete, query)
-- **Consider access control** (who can call which functions?)
-
-#### **2. Write the Move Code**
-```move
-module your_module::your_contract {
-    // Import necessary modules
-    use sui::object::{Self, UID};
-    use sui::transfer;
-    use sui::tx_context::{Self, TxContext};
-
-    // Define your data structures
-    public struct YourObject has key {
+    // Policy Cap struct
+    struct PolicyCap has key, store {
         id: UID,
-        // your fields here
-    }
-
-    // Create functions
-    public fun create_object(ctx: &mut TxContext) {
-        // implementation
-    }
-
-    // Other functions
-    public fun update_object(obj: &mut YourObject, /* params */) {
-        // implementation
+        policy_id: ID,
     }
 }
 ```
 
-#### **3. Deploy and Configure**
+#### Key Functions
+```move
+// Create new insurance policy
+public fun create_policy_entry(
+    ctx: &mut TxContext,
+    coverage_amount: u64,
+    premium_amount: u64,
+    risk_type: u8,
+    max_temperature: u64,
+    min_temperature: u64,
+    max_rainfall: u64,
+    min_humidity: u64,
+    max_humidity: u64,
+    location_lat: u64,
+    location_lng: u64,
+): (InsurancePolicy, PolicyCap)
+
+// Check weather conditions and process claims
+public fun check_weather_conditions_and_claim(
+    policy: &mut InsurancePolicy,
+    current_temperature: u64,
+    current_rainfall: u64,
+    current_humidity: u64,
+    ctx: &mut TxContext,
+): u64
+```
+
+### Contract Deployment
+
+#### Deployment Script
 ```bash
-# Deploy
-sui client publish --gas-budget 100000000 your_module
+#!/bin/bash
+# deploy-insurance.sh
 
-# Update constants.ts
-export const TESTNET_YOUR_PACKAGE_ID = "0xYOUR_PACKAGE_ID";
+echo "🚀 Deploying Insurance Contract to Sui..."
 
-# Update networkConfig.ts
-variables: {
-  yourPackageId: TESTNET_YOUR_PACKAGE_ID,
-}
-```
-
-#### **4. Create Frontend Components**
-```typescript
-// Get package ID
-const yourPackageId = useNetworkVariable("yourPackageId");
-
-// Create transactions
-const tx = new Transaction();
-tx.moveCall({
-  arguments: [/* your arguments */],
-  target: `${yourPackageId}::your_contract::your_function`,
-});
-
-// Execute transactions
-signAndExecute({ transaction: tx }, {
-  onSuccess: async ({ digest }) => {
-    // Handle success
-  }
-});
-```
-
-### Common Smart Contract Patterns
-
-Here are some popular smart contract patterns you can implement:
-
-#### **1. NFT Collection**
-```move
-module nft_collection::nft {
-    public struct NFT has key, store {
-        id: UID,
-        name: String,
-        description: String,
-        image_url: String,
-        creator: address,
-    }
-
-    public fun mint_nft(
-        name: String,
-        description: String, 
-        image_url: String,
-        ctx: &mut TxContext
-    ) {
-        let nft = NFT {
-            id: object::new(ctx),
-            name,
-            description,
-            image_url,
-            creator: tx_context::sender(ctx),
-        };
-        transfer::public_transfer(nft, tx_context::sender(ctx));
-    }
-}
-```
-
-#### **2. Voting System**
-```move
-module voting::poll {
-    public struct Poll has key {
-        id: UID,
-        question: String,
-        options: vector<String>,
-        votes: vector<u64>,
-        voters: vector<address>,
-        creator: address,
-        end_time: u64,
-    }
-
-    public fun create_poll(
-        question: String,
-        options: vector<String>,
-        duration_ms: u64,
-        ctx: &mut TxContext
-    ) {
-        let poll = Poll {
-            id: object::new(ctx),
-            question,
-            options,
-            votes: vector::empty<u64>(),
-            voters: vector::empty<address>(),
-            creator: tx_context::sender(ctx),
-            end_time: tx_context::epoch_timestamp_ms(ctx) + duration_ms,
-        };
-        transfer::share_object(poll);
-    }
-
-    public fun vote(poll: &mut Poll, option_index: u64, ctx: &mut TxContext) {
-        let voter = tx_context::sender(ctx);
-        assert!(!vector::contains(&poll.voters, &voter), 0); // No double voting
-        assert!(tx_context::epoch_timestamp_ms(ctx) < poll.end_time, 1); // Poll not ended
-        
-        vector::push_back(&mut poll.voters, voter);
-        let current_votes = vector::borrow_mut(&mut poll.votes, option_index);
-        *current_votes = *current_votes + 1;
-    }
-}
-```
-
-#### **3. Marketplace**
-```move
-module marketplace::shop {
-    public struct Item has key, store {
-        id: UID,
-        name: String,
-        price: u64,
-        seller: address,
-        for_sale: bool,
-    }
-
-    public fun list_item(
-        name: String,
-        price: u64,
-        ctx: &mut TxContext
-    ) {
-        let item = Item {
-            id: object::new(ctx),
-            name,
-            price,
-            seller: tx_context::sender(ctx),
-            for_sale: true,
-        };
-        transfer::share_object(item);
-    }
-
-    public fun buy_item(
-        item: &mut Item,
-        payment: Coin<SUI>,
-        ctx: &mut TxContext
-    ) {
-        assert!(item.for_sale, 0);
-        assert!(coin::value(&payment) >= item.price, 1);
-        
-        transfer::public_transfer(payment, item.seller);
-        item.for_sale = false;
-        
-        // Transfer ownership logic here
-    }
-}
-```
-
-### Deployment Best Practices
-
-#### **Testing Before Deployment**
-```bash
-# 1. Test your Move code locally
-sui move test
-
-# 2. Build without publishing to check for errors
+# Build the contract
 sui move build
 
-# 3. Deploy to devnet first for testing
-sui client switch --env devnet
-sui client publish --gas-budget 100000000 .
+# Deploy to network
+sui client publish --gas-budget 100000000
 
-# 4. Test thoroughly on devnet
-# 5. Deploy to testnet for public testing
-sui client switch --env testnet
-sui client publish --gas-budget 100000000 .
-
-# 6. Finally deploy to mainnet when ready
-sui client switch --env mainnet
-sui client publish --gas-budget 100000000 .
+echo "✅ Contract deployed successfully!"
+echo "📦 Package ID: [COPY THIS TO FRONTEND]"
 ```
 
-#### **Gas Budget Guidelines**
-- **Simple contracts**: 10,000,000 (10M)
-- **Medium complexity**: 50,000,000 (50M)
-- **Complex contracts**: 100,000,000 (100M)
-- **Very large contracts**: 200,000,000 (200M)
-
-#### **Version Management**
-```toml
-# In Move.toml, always increment version
-[package]
-name = "your_contract"
-version = "1.1.0"  # Increment this for updates
-edition = "2024.beta"
-```
-
-### Troubleshooting Deployment Issues
-
-#### **Common Errors and Solutions**
-
-**Error: "Insufficient gas"**
+#### Verification
 ```bash
-# Solution: Increase gas budget
-sui client publish --gas-budget 200000000 .
+# Verify contract on SuiScan
+sui client object <PACKAGE_ID>
+
+# Check contract functions
+sui client call <PACKAGE_ID>::insurance::create_policy_entry
 ```
 
-**Error: "Module already exists"**
-```bash
-# Solution: You can't redeploy the same module. Create a new version or use upgrade
-# For new version, change the module name:
-module your_contract_v2::contract {
-    // your code
+## 🌤️ Weather Integration
+
+### Supported Weather Providers
+
+#### OpenWeatherMap
+- **Current Weather**: Real-time conditions
+- **Forecast Data**: 5-day predictions
+- **Historical Data**: Past weather patterns
+- **Global Coverage**: Worldwide data
+
+#### Data Points Collected
+```typescript
+interface WeatherDataPoint {
+  temperature: number;      // Celsius
+  humidity: number;         // Percentage
+  rainfall: number;         // Millimeters
+  windSpeed: number;        // m/s
+  pressure: number;         // hPa
+  visibility: number;       // km
+  uvIndex: number;         // UV index
+  timestamp: number;        // Unix timestamp
 }
 ```
 
-**Error: "Invalid address"**
-```toml
-# Solution: Make sure addresses in Move.toml are correct
-[addresses]
-your_contract = "0x0"  # This should always be 0x0 for new deployments
+### Oracle Architecture
+
+#### Data Flow
+```
+Weather APIs → Data Processing → Oracle Service → Smart Contract
+     ↓              ↓              ↓              ↓
+Raw Data → Validation → Aggregation → Blockchain
 ```
 
-**Error: "Compilation failed"**
+#### Caching Strategy
+- **Cache Duration**: 5 minutes
+- **Fallback Data**: Consistent simulated data
+- **Error Handling**: Graceful degradation
+- **Performance**: Optimized for speed
+
+### Weather Thresholds
+
+#### Temperature Ranges
+```typescript
+const temperatureThresholds = {
+  critical_high: 40,    // °C - Crop damage
+  high: 35,             // °C - Stress conditions
+  optimal_high: 30,     // °C - Good growing
+  optimal_low: 15,      // °C - Good growing
+  low: 5,               // °C - Stress conditions
+  critical_low: 0,      // °C - Frost damage
+};
+```
+
+#### Rainfall Thresholds
+```typescript
+const rainfallThresholds = {
+  drought: 0,           // mm - No rain
+  low: 5,               // mm - Light rain
+  normal: 15,           // mm - Normal rain
+  high: 30,             // mm - Heavy rain
+  flood: 50,            // mm - Flood conditions
+};
+```
+
+#### Humidity Thresholds
+```typescript
+const humidityThresholds = {
+  very_low: 20,         // % - Arid conditions
+  low: 40,              // % - Dry conditions
+  normal: 60,            // % - Optimal conditions
+  high: 80,             // % - Humid conditions
+  very_high: 95,        // % - Saturated conditions
+};
+```
+
+## 🔐 Security
+
+### Smart Contract Security
+
+#### Security Measures
+- **Access Control**: Owner-only functions
+- **Input Validation**: Parameter checking
+- **Overflow Protection**: Safe math operations
+- **Reentrancy Guards**: Attack prevention
+- **Upgradeability**: Controlled updates
+
+#### Audit Recommendations
+- **Code Review**: Professional audit
+- **Testing**: Comprehensive test suite
+- **Monitoring**: Real-time security monitoring
+- **Updates**: Regular security patches
+
+### Data Security
+
+#### Privacy Protection
+- **No Personal Data**: Only coordinates stored
+- **Encrypted Storage**: Sensitive data protection
+- **Access Control**: Role-based permissions
+- **Data Minimization**: Only necessary data collected
+
+#### Network Security
+- **HTTPS**: Encrypted communication
+- **API Security**: Rate limiting and authentication
+- **Wallet Security**: Secure key management
+- **Transaction Security**: Signed transactions
+
+### Best Practices
+
+#### For Users
+- **Wallet Security**: Use hardware wallets
+- **Private Keys**: Never share private keys
+- **Network Verification**: Always verify network
+- **Transaction Review**: Check before signing
+
+#### For Developers
+- **Code Audits**: Regular security reviews
+- **Dependency Updates**: Keep dependencies current
+- **Error Handling**: Comprehensive error management
+- **Logging**: Detailed security logs
+
+## 🚀 Deployment
+
+### Frontend Deployment
+
+#### Vercel Deployment
 ```bash
-# Solution: Check your Move syntax
-sui move build  # This will show detailed error messages
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy to Vercel
+vercel --prod
+
+# Configure environment variables
+vercel env add OPENWEATHER_API_KEY
+vercel env add SUI_NETWORK
 ```
 
-#### **Debugging Tips**
-1. **Use `sui move test`** to run unit tests before deployment
-2. **Check dependencies** in Move.toml match your Sui version
-3. **Verify imports** - make sure all `use` statements are correct
-4. **Test functions individually** before deploying the full contract
-5. **Use `assert!` statements** for input validation in your Move code
-
-### Frontend Integration Patterns
-
-#### **Pattern 1: Simple Function Calls**
-```typescript
-// For functions that don't return data
-const callFunction = () => {
-  const tx = new Transaction();
-  tx.moveCall({
-    arguments: [tx.pure.string("hello")],
-    target: `${packageId}::module::function_name`,
-  });
-  
-  signAndExecute({ transaction: tx });
-};
-```
-
-#### **Pattern 2: Object Queries**
-```typescript
-// For reading object data
-const { data } = useSuiClientQuery(
-  "getObject",
-  {
-    id: objectId,
-    options: { showContent: true },
-  },
-  { enabled: !!objectId }
-);
-
-// Parse the data
-const objectFields = data?.content?.dataType === "moveObject" 
-  ? data.content.fields 
-  : null;
-```
-
-#### **Pattern 3: Event Listening**
-```typescript
-// For listening to contract events
-const { data: events } = useSuiClientQuery(
-  "queryEvents",
-  {
-    query: {
-      MoveModule: {
-        package: packageId,
-        module: "your_module",
-      },
-    },
-  }
-);
-```
-
-#### **Pattern 4: Multi-Step Transactions**
-```typescript
-// For complex operations requiring multiple calls
-const complexOperation = () => {
-  const tx = new Transaction();
-  
-  // Step 1: Create object
-  const [obj] = tx.moveCall({
-    arguments: [],
-    target: `${packageId}::module::create_object`,
-  });
-  
-  // Step 2: Use the created object
-  tx.moveCall({
-    arguments: [obj, tx.pure.string("data")],
-    target: `${packageId}::module::update_object`,
-  });
-  
-  signAndExecute({ transaction: tx });
-};
-```
-
-### The Three Networks
-
-Your constants.ts file defines Package IDs for three different Sui networks:
-
-```typescript
-export const DEVNET_COUNTER_PACKAGE_ID = "0xTODO";
-export const TESTNET_COUNTER_PACKAGE_ID = "0xcea82fb908b9d9566b1c7977491e76901ed167978a1ecd6053a994881c0ea9b5";
-export const MAINNET_COUNTER_PACKAGE_ID = "0xTODO";
-```
-
-**Why Three Different Networks?**
-
-1. **DEVNET (Development Network)**
-   - **Purpose**: Local development and testing
-   - **Cost**: Free
-   - **Speed**: Very fast
-   - **Use Case**: When you're building and testing locally
-   - **Data Persistence**: May be reset frequently
-
-2. **TESTNET (Test Network)**
-   - **Purpose**: Public testing environment
-   - **Cost**: Free (test tokens from faucet)
-   - **Speed**: Similar to mainnet
-   - **Use Case**: Testing with real network conditions
-   - **Data Persistence**: More stable than devnet
-
-3. **MAINNET (Main Network)**
-   - **Purpose**: Production environment
-   - **Cost**: Real SUI tokens (costs real money)
-   - **Speed**: Standard network speed
-   - **Use Case**: Live applications with real users
-   - **Data Persistence**: Permanent
-
-### How Your Frontend Uses These IDs
-
-Your React components don't directly use these constants. Instead, they use a smart helper function that automatically selects the right Package ID based on your current network:
-
-```typescript
-// In your React components
-const counterPackageId = useNetworkVariable("counterPackageId");
-```
-
-**The Magic Behind useNetworkVariable:**
-
-This function looks at:
-1. **Which network your wallet is connected to** (devnet/testnet/mainnet)
-2. **Automatically selects the corresponding Package ID** from constants.ts
-3. **Returns the correct ID** for your current network
-
-**Example Flow:**
-```
-Wallet connected to testnet → useNetworkVariable returns → TESTNET_COUNTER_PACKAGE_ID
-Wallet connected to mainnet → useNetworkVariable returns → MAINNET_COUNTER_PACKAGE_ID
-```
-
-### Setting Up Your Package IDs
-
-#### **For Development (Recommended Start Here):**
-
-1. **Deploy to Testnet** (as shown in the deployment guide above)
-2. **Copy your Package ID** from the deployment output
-3. **Update constants.ts:**
-   ```typescript
-   export const TESTNET_COUNTER_PACKAGE_ID = "0xYOUR_ACTUAL_PACKAGE_ID";
-   ```
-
-#### **For Production (Advanced):**
-
-1. **Deploy to Mainnet** (costs real SUI tokens)
-2. **Update constants.ts:**
-   ```typescript
-   export const MAINNET_COUNTER_PACKAGE_ID = "0xYOUR_MAINNET_PACKAGE_ID";
-   ```
-
-### Common Mistakes and How to Avoid Them
-
-#### **❌ Wrong Network**
-```typescript
-// Your wallet is on testnet, but you're using mainnet Package ID
-export const TESTNET_COUNTER_PACKAGE_ID = "0xMAINNET_PACKAGE_ID"; // Wrong!
-```
-**Result**: "Package not found" errors
-
-#### **❌ Typos in Package ID**
-```typescript
-// Missing a character or wrong character
-export const TESTNET_COUNTER_PACKAGE_ID = "0xcea82fb908b9d9566b1c7977491e76901ed167978a1ecd6053a994881c0ea9b"; // Missing last character!
-```
-**Result**: "Package not found" errors
-
-#### **❌ Using "0xTODO"**
-```typescript
-// Forgetting to replace the placeholder
-export const TESTNET_COUNTER_PACKAGE_ID = "0xTODO"; // Still a placeholder!
-```
-**Result**: "Package not found" errors
-
-#### **✅ Correct Setup**
-```typescript
-// Properly deployed and configured
-export const TESTNET_COUNTER_PACKAGE_ID = "0xcea82fb908b9d9566b1c7977491e76901ed167978a1ecd6053a994881c0ea9b5";
-```
-
-### How Transactions Work with Package IDs
-
-When you interact with your smart contract, here's what happens:
-
-1. **User Action**: User clicks "Create Counter" in your app
-2. **Package ID Lookup**: `useNetworkVariable` gets the correct Package ID
-3. **Transaction Creation**: Your code creates a transaction like:
-   ```typescript
-   tx.moveCall({
-     target: `${counterPackageId}::counter::create`,
-     arguments: [],
-   });
-   ```
-4. **Target Resolution**: This becomes something like:
-   ```
-   0xcea82fb908b9d9566b1c7977491e76901ed167978a1ecd6053a994881c0ea9b5::counter::create
-   ```
-5. **Blockchain Execution**: The Sui network finds your smart contract and executes the `create` function
-
-### Debugging Package ID Issues
-
-If you're getting errors, check these in order:
-
-1. **Verify your Package ID is correct:**
-   ```bash
-   # Check if your package exists on testnet
-   sui client object 0xYOUR_PACKAGE_ID --json
-   ```
-
-2. **Confirm your wallet network:**
-   - Open Sui Wallet extension
-   - Check the network dropdown (should say "Testnet")
-
-3. **Check your constants.ts file:**
-   - Make sure there are no typos
-   - Ensure you're not using "0xTODO"
-   - Verify the Package ID matches your deployment output
-
-4. **Clear browser cache:**
-   - Sometimes old Package IDs get cached
-   - Hard refresh (Ctrl+Shift+R) or clear browser cache
-
-### Advanced: Multiple Smart Contracts
-
-As your dApp grows, you might deploy multiple smart contracts. You can organize them like this:
-
-```typescript
-// Multiple contracts for different features
-export const TESTNET_COUNTER_PACKAGE_ID = "0xabc123...";
-export const TESTNET_MARKETPLACE_PACKAGE_ID = "0xdef456...";
-export const TESTNET_NFT_PACKAGE_ID = "0xghi789...";
-
-// Or organize by environment
-export const TESTNET_PACKAGES = {
-  counter: "0xabc123...",
-  marketplace: "0xdef456...",
-  nft: "0xghi789...",
-};
-```
-
-This configuration system ensures your frontend always connects to the right smart contracts on the right network, making your dApp robust and reliable across different environments.
-
-## Starting your dApp
-
-To install dependencies you can run
-
+#### Netlify Deployment
 ```bash
+# Build the application
+pnpm build
+
+# Deploy to Netlify
+netlify deploy --prod --dir=out
+```
+
+#### Docker Deployment
+```dockerfile
+FROM node:18-alpine
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+RUN npm run build
+
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+### Smart Contract Deployment
+
+#### Testnet Deployment
+```bash
+# Configure for testnet
+sui client switch --env testnet
+
+# Deploy contract
+sui client publish --gas-budget 100000000
+
+# Verify deployment
+sui client object <PACKAGE_ID>
+```
+
+#### Mainnet Deployment
+```bash
+# Configure for mainnet
+sui client switch --env mainnet
+
+# Deploy contract
+sui client publish --gas-budget 100000000
+
+# Verify deployment
+sui client object <PACKAGE_ID>
+```
+
+### Environment Configuration
+
+#### Production Environment
+```env
+NODE_ENV=production
+SUI_NETWORK=mainnet
+OPENWEATHER_API_KEY=your_production_key
+LOG_LEVEL=error
+ENABLE_ANALYTICS=true
+```
+
+#### Staging Environment
+```env
+NODE_ENV=staging
+SUI_NETWORK=testnet
+OPENWEATHER_API_KEY=your_staging_key
+LOG_LEVEL=info
+ENABLE_DEBUG_MODE=true
+```
+
+## 🧪 Testing
+
+### Unit Testing
+
+#### Frontend Tests
+```bash
+# Run component tests
+pnpm test
+
+# Run with coverage
+pnpm test:coverage
+
+# Run specific test
+pnpm test InsuranceContractCreator
+```
+
+#### Smart Contract Tests
+```bash
+# Run Move tests
+sui move test
+
+# Run specific test
+sui move test insurance::test_create_policy
+```
+
+### Integration Testing
+
+#### End-to-End Tests
+```bash
+# Install Playwright
+pnpm add -D @playwright/test
+
+# Run E2E tests
+pnpm test:e2e
+
+# Run in headed mode
+pnpm test:e2e --headed
+```
+
+#### API Testing
+```bash
+# Test weather API
+pnpm test:api
+
+# Test Sui integration
+pnpm test:sui
+```
+
+### Performance Testing
+
+#### Load Testing
+```bash
+# Install Artillery
+npm install -g artillery
+
+# Run load tests
+artillery run load-test.yml
+```
+
+#### Stress Testing
+```bash
+# Test with high load
+artillery run stress-test.yml
+```
+
+## 📊 Monitoring
+
+### Application Monitoring
+
+#### Health Checks
+```typescript
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'healthy',
+    timestamp: Date.now(),
+    version: process.env.APP_VERSION,
+    uptime: process.uptime()
+  });
+});
+```
+
+#### Performance Metrics
+- **Response Time**: API response times
+- **Throughput**: Requests per second
+- **Error Rate**: Error percentage
+- **Uptime**: Service availability
+
+### Blockchain Monitoring
+
+#### Transaction Monitoring
+```typescript
+// Monitor Sui transactions
+const monitorTransactions = async () => {
+  const client = new SuiClient({ url: SUI_RPC_URL });
+  
+  // Watch for new transactions
+  client.subscribeEvent({
+    filter: { Package: PACKAGE_ID },
+    onMessage: (event) => {
+      console.log('New transaction:', event);
+    }
+  });
+};
+```
+
+#### Smart Contract Events
+- **Policy Creation**: New insurance policies
+- **Claim Processing**: Automatic payouts
+- **Weather Updates**: Oracle data feeds
+- **Error Events**: Contract failures
+
+### Weather Data Monitoring
+
+#### Data Quality Metrics
+- **Accuracy**: Weather data accuracy
+- **Latency**: Data update frequency
+- **Availability**: Service uptime
+- **Coverage**: Geographic coverage
+
+#### Oracle Health
+```typescript
+// Check oracle health
+const checkOracleHealth = async () => {
+  const health = await oracleService.getHealthStatus();
+  
+  return {
+    status: health.status,
+    lastUpdate: health.lastUpdate,
+    dataQuality: health.dataQuality,
+    coverage: health.coverage
+  };
+};
+```
+
+## 🤝 Contributing
+
+### Development Setup
+
+#### Fork and Clone
+```bash
+# Fork the repository on GitHub
+# Clone your fork
+git clone https://github.com/your-username/parametric-agricultural-insurance.git
+cd parametric-agricultural-insurance
+
+# Add upstream remote
+git remote add upstream https://github.com/original-org/parametric-agricultural-insurance.git
+```
+
+#### Development Workflow
+```bash
+# Create feature branch
+git checkout -b feature/your-feature-name
+
+# Make changes
+# Test changes
+pnpm test
+
+# Commit changes
+git commit -m "Add your feature"
+
+# Push to fork
+git push origin feature/your-feature-name
+
+# Create pull request
+```
+
+### Code Standards
+
+#### TypeScript Guidelines
+- **Type Safety**: Strict type checking
+- **Interface Design**: Clear interfaces
+- **Error Handling**: Comprehensive error management
+- **Documentation**: JSDoc comments
+
+#### React Guidelines
+- **Component Structure**: Functional components
+- **State Management**: Hooks and context
+- **Performance**: Memoization and optimization
+- **Accessibility**: WCAG compliance
+
+#### Move Guidelines
+- **Security**: Secure coding practices
+- **Gas Optimization**: Efficient operations
+- **Documentation**: Clear function documentation
+- **Testing**: Comprehensive test coverage
+
+### Pull Request Process
+
+#### Before Submitting
+1. **Code Review**: Self-review your code
+2. **Testing**: Ensure all tests pass
+3. **Documentation**: Update relevant docs
+4. **Performance**: Check for performance issues
+
+#### PR Template
+```markdown
+## Description
+Brief description of changes
+
+## Type of Change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Breaking change
+- [ ] Documentation update
+
+## Testing
+- [ ] Unit tests pass
+- [ ] Integration tests pass
+- [ ] Manual testing completed
+
+## Checklist
+- [ ] Code follows style guidelines
+- [ ] Self-review completed
+- [ ] Documentation updated
+- [ ] No breaking changes
+```
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+#### Installation Issues
+```bash
+# Permission denied error
+sudo chmod +x node_modules/.bin/next
+
+# Node version issues
+nvm use 18
+
+# Package manager issues
+rm -rf node_modules package-lock.json
 pnpm install
 ```
 
-To start your dApp in development mode run
-
+#### Sui Wallet Issues
 ```bash
-pnpm dev
+# Wallet not connecting
+# Check network configuration
+sui client active-env
+
+# Switch to correct network
+sui client switch --env testnet
+
+# Reset wallet connection
+# Clear browser cache and reconnect
 ```
 
-## Building
-
-To build your app for deployment you can run
-
+#### Weather API Issues
 ```bash
+# API key not working
+# Check environment variables
+echo $OPENWEATHER_API_KEY
+
+# Test API directly
+curl "https://api.openweathermap.org/data/2.5/weather?lat=48.8566&lon=2.3522&appid=YOUR_API_KEY"
+```
+
+#### Smart Contract Issues
+```bash
+# Contract not deployed
+# Check package ID
+sui client object <PACKAGE_ID>
+
+# Redeploy contract
+./deploy-insurance.sh
+
+# Check gas balance
+sui client gas
+```
+
+### Debug Mode
+
+#### Enable Debug Logging
+```typescript
+// Enable debug mode
+const DEBUG = process.env.NODE_ENV === 'development';
+
+if (DEBUG) {
+  console.log('Debug information:', debugData);
+}
+```
+
+#### Browser DevTools
+```javascript
+// Open browser console
+// Check for errors
+console.error('Error details:', error);
+
+// Monitor network requests
+// Check API responses
+// Verify wallet connection
+```
+
+### Performance Issues
+
+#### Slow Loading
+```bash
+# Check bundle size
 pnpm build
+pnpm analyze
+
+# Optimize images
+# Use next/image for optimization
+# Implement lazy loading
 ```
 
-## Move Smart Contract Integration Guide
-
-This template demonstrates how to integrate Move smart contracts with your React frontend. The examples below show how to create and interact with a counter smart contract.
-
-### Prerequisites
-
-Before integrating Move smart contracts, ensure you have:
-
-1. **Sui CLI installed** - Follow the [Sui installation guide](https://docs.sui.io/build/install)
-2. **Published Move package** - Your smart contract deployed on the Sui network
-3. **Package ID** - The unique identifier of your deployed Move package
-
-### Core Integration Components
-
-#### 1. Network Configuration (`networkConfig.ts`)
-
-Set up your network configuration to handle different environments:
-
-```typescript
-export const TESTNET_COUNTER_PACKAGE_ID = "YOUR_PACKAGE_ID_HERE";
+#### High Gas Costs
+```move
+// Optimize Move functions
+// Reduce storage operations
+// Batch transactions
+// Use efficient data structures
 ```
 
-#### 2. Essential Hooks and Imports
+### Support Channels
 
-For Move smart contract integration, you'll typically need these imports:
+#### Community Support
+- **GitHub Issues**: Bug reports and feature requests
+- **Discord**: Real-time community support
+- **Stack Overflow**: Technical questions
+- **Reddit**: General discussions
 
-```typescript
-import { Transaction } from "@mysten/sui/transactions";
-import { useSignAndExecuteTransaction, useSuiClient } from "@mysten/dapp-kit";
-import { useNetworkVariable } from "./networkConfig";
-```
+#### Professional Support
+- **Enterprise Support**: Commercial support
+- **Consulting**: Custom implementations
+- **Training**: Team training programs
+- **Auditing**: Security audits
 
-### Smart Contract Integration Patterns
+## 📄 License
 
-#### Pattern 1: Creating Objects (CreateCounter Example)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-**File: `app/CreateCounter.tsx`**
+### License Summary
+- **Commercial Use**: ✅ Allowed
+- **Modification**: ✅ Allowed
+- **Distribution**: ✅ Allowed
+- **Private Use**: ✅ Allowed
+- **Liability**: ❌ No warranty provided
+- **Warranty**: ❌ No warranty provided
 
-This pattern shows how to call a Move function that creates a new object:
+### Third-Party Licenses
+- **Sui SDK**: Apache 2.0 License
+- **Next.js**: MIT License
+- **React**: MIT License
+- **Tailwind CSS**: MIT License
 
-```typescript
-export function CreateCounter({ onCreated }: { onCreated: (id: string) => void }) {
-  const counterPackageId = useNetworkVariable("counterPackageId");
-  const suiClient = useSuiClient();
-  const { mutate: signAndExecute, isSuccess, isPending } = useSignAndExecuteTransaction();
+## 🔗 Links and Resources
 
-  function create() {
-    // 1. Create a new transaction
-    const tx = new Transaction();
+### Official Documentation
+- **Sui Documentation**: [docs.sui.io](https://docs.sui.io)
+- **Next.js Documentation**: [nextjs.org/docs](https://nextjs.org/docs)
+- **React Documentation**: [react.dev](https://react.dev)
 
-    // 2. Add a moveCall to the transaction
-    tx.moveCall({
-      arguments: [], // No arguments needed for counter::create
-      target: `${counterPackageId}::counter::create`, // module::function format
-    });
+### Blockchain Resources
+- **SuiScan Explorer**: [suiscan.xyz](https://suiscan.xyz)
+- **Sui GitHub**: [github.com/MystenLabs/sui](https://github.com/MystenLabs/sui)
+- **Sui Discord**: [discord.gg/sui](https://discord.gg/sui)
 
-    // 3. Sign and execute the transaction
-    signAndExecute(
-      { transaction: tx },
-      {
-        onSuccess: async ({ digest }) => {
-          // 4. Wait for transaction completion and get effects
-          const { effects } = await suiClient.waitForTransaction({
-            digest: digest,
-            options: { showEffects: true },
-          });
+### Weather Data Sources
+- **OpenWeatherMap**: [openweathermap.org](https://openweathermap.org)
+- **WeatherAPI**: [weatherapi.com](https://weatherapi.com)
+- **AccuWeather**: [developer.accuweather.com](https://developer.accuweather.com)
 
-          // 5. Extract the created object ID
-          const createdObjectId = effects?.created?.[0]?.reference?.objectId;
-          if (createdObjectId) {
-            onCreated(createdObjectId);
-          }
-        },
-      },
-    );
-  }
+### Development Tools
+- **VS Code**: [code.visualstudio.com](https://code.visualstudio.com)
+- **Sui Wallet**: [chrome.google.com/webstore](https://chrome.google.com/webstore)
+- **Sui CLI**: [docs.sui.io/build/sui-install](https://docs.sui.io/build/sui-install)
 
-  return (
-    <Button 
-      onClick={create} 
-      disabled={isSuccess || isPending}
-    >
-      {isPending ? "Creating..." : "Create Counter"}
-    </Button>
-  );
-}
-```
+---
 
-**Key Points:**
-- Use `Transaction()` to build your transaction
-- `tx.moveCall()` specifies the Move function to call
-- `target` format: `${packageId}::${module}::${function}`
-- Handle success callback to get created object IDs
-- Use loading states (`isPending`, `isSuccess`) for UX
+## 🌟 Acknowledgments
 
-#### Pattern 2: Interacting with Existing Objects (Counter Example)
+**Built with ❤️ for the agricultural community**
 
-**File: `app/Counter.tsx`**
+### Special Thanks
+- **Sui Foundation**: For blockchain infrastructure
+- **OpenWeatherMap**: For weather data services
+- **Agricultural Community**: For feedback and testing
+- **Open Source Contributors**: For their valuable contributions
 
-This pattern shows how to call Move functions on existing objects:
+### Inspiration
+This project was inspired by the need to provide accessible, transparent, and reliable insurance solutions for farmers worldwide, leveraging the power of blockchain technology and real-time data.
 
-```typescript
-export function Counter({ id }: { id: string }) {
-  const counterPackageId = useNetworkVariable("counterPackageId");
-  const suiClient = useSuiClient();
-  const { mutate: signAndExecute } = useSignAndExecuteTransaction();
-  
-  // Query object data
-  const { data, refetch } = useSuiClientQuery("getObject", {
-    id,
-    options: { showContent: true, showOwner: true },
-  });
+---
 
-  const [waitingForTxn, setWaitingForTxn] = useState("");
-
-  const executeMoveCall = (method: "increment" | "reset") => {
-    setWaitingForTxn(method);
-    const tx = new Transaction();
-
-    if (method === "reset") {
-      // Move call with multiple arguments
-      tx.moveCall({
-        arguments: [
-          tx.object(id),        // Object reference
-          tx.pure.u64(0)        // Pure value (u64 type)
-        ],
-        target: `${counterPackageId}::counter::set_value`,
-      });
-    } else {
-      // Move call with single object argument
-      tx.moveCall({
-        arguments: [tx.object(id)],
-        target: `${counterPackageId}::counter::increment`,
-      });
-    }
-
-    signAndExecute(
-      { transaction: tx },
-      {
-        onSuccess: (tx) => {
-          // Wait for transaction and refresh data
-          suiClient.waitForTransaction({ digest: tx.digest }).then(async () => {
-            await refetch(); // Refresh object data
-            setWaitingForTxn("");
-          });
-        },
-      },
-    );
-  };
-
-  return (
-    <div>
-      <p>Count: {getCounterFields(data.data)?.value}</p>
-      <Button onClick={() => executeMoveCall("increment")}>
-        {waitingForTxn === "increment" ? "Processing..." : "Increment"}
-      </Button>
-      <Button onClick={() => executeMoveCall("reset")}>
-        {waitingForTxn === "reset" ? "Processing..." : "Reset"}
-      </Button>
-    </div>
-  );
-}
-```
-
-**Key Points:**
-- Use `useSuiClientQuery` to fetch object data
-- `tx.object(id)` for object references
-- `tx.pure.u64(value)` for pure values with specific types
-- Always `refetch()` after successful transactions to update UI
-- Track transaction states for better UX
-
-### Common Move Call Patterns
-
-#### 1. Object References
-```typescript
-tx.moveCall({
-  arguments: [tx.object(objectId)],
-  target: `${packageId}::module::function`,
-});
-```
-
-#### 2. Pure Values
-```typescript
-tx.moveCall({
-  arguments: [
-    tx.pure.u64(123),           // 64-bit unsigned integer
-    tx.pure.string("hello"),    // String
-    tx.pure.bool(true),         // Boolean
-    tx.pure.address(address),   // Sui address
-  ],
-  target: `${packageId}::module::function`,
-});
-```
-
-#### 3. Mixed Arguments
-```typescript
-tx.moveCall({
-  arguments: [
-    tx.object(objectId),        // Object reference
-    tx.pure.u64(amount),        // Pure value
-    tx.pure.address(recipient), // Another pure value
-  ],
-  target: `${packageId}::module::transfer`,
-});
-```
-
-### Error Handling Best Practices
-
-```typescript
-signAndExecute(
-  { transaction: tx },
-  {
-    onSuccess: (result) => {
-      console.log("Transaction successful:", result.digest);
-      // Handle success
-    },
-    onError: (error) => {
-      console.error("Transaction failed:", error);
-      // Handle error - show user feedback
-      setWaitingForTxn("");
-    },
-  },
-);
-```
-
-### Data Fetching and State Management
-
-#### Fetching Object Data
-```typescript
-const { data, isPending, error, refetch } = useSuiClientQuery("getObject", {
-  id: objectId,
-  options: {
-    showContent: true,  // Include object content
-    showOwner: true,    // Include owner information
-    showType: true,     // Include type information
-  },
-});
-```
-
-#### Parsing Object Data
-```typescript
-function getCounterFields(data: SuiObjectData) {
-  if (data.content?.dataType !== "moveObject") {
-    return null;
-  }
-  return data.content.fields as { value: number; owner: string };
-}
-```
-
-### Testing Your Integration
-
-1. **Start the development server:**
-   ```bash
-   pnpm dev
-   ```
-
-2. **Connect your wallet** using the Connect Wallet button
-
-3. **Test contract interactions:**
-   - Create new objects
-   - Call functions on existing objects
-   - Verify state changes in the UI
-
-### Troubleshooting
-
-- **"Package not found"**: Verify your package ID is correct
-- **"Function not found"**: Check the module and function names
-- **"Insufficient gas"**: Ensure your wallet has enough SUI for gas fees
-- **"Object not found"**: Verify object IDs and ownership
-
-This integration pattern can be extended to work with any Move smart contract by adjusting the function calls, arguments, and data parsing logic.
+**Ready to revolutionize agricultural insurance? Start building today!** 🚀

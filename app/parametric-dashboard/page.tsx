@@ -23,7 +23,7 @@ import {
   Zap
 } from 'lucide-react';
 import Link from 'next/link';
-import { nautilusOracleService } from '@/services/nautilus-oracle';
+// import { nautilusOracleService } from '@/services/nautilus-oracle';
 
 export default function ParametricDashboardPage() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -41,12 +41,12 @@ export default function ParametricDashboardPage() {
   const loadWeatherData = async () => {
     try {
       // Simulation des données météo depuis l'oracle Nautilus
-      const data = await nautilusOracleService.getWeatherData({
-        latitude: 48.8566,
-        longitude: 2.3522,
-        productType: 'seasonal'
-      });
-      setWeatherData(data);
+      // const data = await nautilusOracleService.getWeatherData({
+      //   latitude: 48.8566,
+      //   longitude: 2.3522,
+      //   productType: 'seasonal'
+      // });
+      // setWeatherData(data);
     } catch (error) {
       console.error('Erreur lors du chargement des données météo:', error);
     }

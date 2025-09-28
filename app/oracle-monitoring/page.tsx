@@ -25,12 +25,12 @@ import {
   Eye
 } from 'lucide-react';
 import Link from 'next/link';
-import { oracleMonitoringService, OracleStatus } from '@/services/oracle-monitoring';
+// import { oracleMonitoringService, OracleStatus } from '@/services/oracle-monitoring';
 
 export default function OracleMonitoringPage() {
   const [isMonitoring, setIsMonitoring] = useState(false);
-  const [oracleStatus, setOracleStatus] = useState<OracleStatus | null>(null);
-  const [statusHistory, setStatusHistory] = useState<OracleStatus[]>([]);
+  const [oracleStatus, setOracleStatus] = useState<any | null>(null);
+  const [statusHistory, setStatusHistory] = useState<any[]>([]);
   const [healthReport, setHealthReport] = useState<any>(null);
   const [autoRefresh, setAutoRefresh] = useState(true);
 
@@ -39,33 +39,33 @@ export default function OracleMonitoringPage() {
     startMonitoring();
     
     // Callback pour recevoir les mises à jour
-    const handleStatusUpdate = (status: OracleStatus) => {
+    const handleStatusUpdate = (status: any) => {
       setOracleStatus(status);
       setStatusHistory(prev => [status, ...prev.slice(0, 49)]); // Garder les 50 derniers
     };
 
-    oracleMonitoringService.onStatusUpdate(handleStatusUpdate);
+    // oracleMonitoringService.onStatusUpdate(handleStatusUpdate);
 
     return () => {
-      oracleMonitoringService.removeCallback(handleStatusUpdate);
+      // oracleMonitoringService.removeCallback(handleStatusUpdate);
       stopMonitoring();
     };
   }, []);
 
   const startMonitoring = () => {
-    oracleMonitoringService.startMonitoring(10000); // Toutes les 10 secondes
+    // oracleMonitoringService.startMonitoring(10000); // Toutes les 10 secondes
     setIsMonitoring(true);
   };
 
   const stopMonitoring = () => {
-    oracleMonitoringService.stopMonitoring();
+    // oracleMonitoringService.stopMonitoring();
     setIsMonitoring(false);
   };
 
   const generateHealthReport = async () => {
     try {
-      const report = await oracleMonitoringService.generateHealthReport();
-      setHealthReport(report);
+      // const report = await oracleMonitoringService.generateHealthReport();
+      // setHealthReport(report);
     } catch (error) {
       console.error('Erreur lors de la génération du rapport:', error);
     }

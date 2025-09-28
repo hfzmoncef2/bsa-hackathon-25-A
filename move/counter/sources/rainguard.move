@@ -125,7 +125,6 @@ module rainguard::rainguard {
 
     // ========== POLICY MANAGEMENT ==========
 
-    /// Create a new insurance policy
     public fun create_policy(
         policyholder: address,
         coverage_amount: u64,
@@ -141,7 +140,7 @@ module rainguard::rainguard {
         pool: &mut InsurancePool,
         ctx: &mut TxContext
     ): (InsurancePolicy, PolicyHolderCap) {
-        let current_time = 0; // Simplified for now
+        let current_time = 0;
         let start_date = current_time;
         let end_date = start_date + (coverage_period_days * 24 * 60 * 60 * 1000);
 
@@ -190,7 +189,6 @@ module rainguard::rainguard {
         (policy, policy_cap)
     }
 
-    /// Update policy details (only by policyholder)
     public fun update_policy(
         policy: &mut InsurancePolicy,
         new_coverage_amount: u64,
@@ -207,7 +205,6 @@ module rainguard::rainguard {
         policy.premium_amount = new_premium_amount;
         policy.max_payout = new_coverage_amount;
 
-        // Update risk types
         policy.risk_types = vec_set::empty();
         let mut i = 0;
         while (i < vector::length(&new_risk_types)) {
@@ -215,8 +212,6 @@ module rainguard::rainguard {
             i = i + 1;
         };
 
-        // Update weather thresholds - cannot reassign Table, skip for now
-        // policy.weather_thresholds = table::new<u8, u64>(ctx);
         let mut j = 0;
         while (j < vector::length(&new_weather_thresholds)) {
             table::add(&mut policy.weather_thresholds, *vector::borrow(&new_weather_thresholds, j), *vector::borrow(&new_threshold_values, j));
@@ -224,7 +219,6 @@ module rainguard::rainguard {
         };
     }
 
-    /// Cancel a policy
     public fun cancel_policy(
         policy: &mut InsurancePolicy,
         policy_cap: PolicyHolderCap,
@@ -238,14 +232,12 @@ module rainguard::rainguard {
         object::delete(id);
     }
 
-    /// Check if policy is expired
     public fun is_policy_expired(policy: &InsurancePolicy, clock: &Clock): bool {
         clock::timestamp_ms(clock) > policy.end_date
     }
 
     // ========== CLAIM MANAGEMENT ==========
 
-    /// Submit an insurance claim
     public fun submit_claim(
         policy: &mut InsurancePolicy,
         claim_amount: u64,
@@ -259,7 +251,7 @@ module rainguard::rainguard {
         assert!(policy.status == POLICY_STATUS_ACTIVE, E_POLICY_EXPIRED);
         assert!(claim_amount <= policy.max_payout, E_INVALID_CLAIM);
 
-        let current_time = 0; // Simplified for now
+        let current_time = 0;
         let mut weather_data_table = table::new<vector<u8>, u64>(ctx);
         let mut i = 0;
         while (i < vector::length(&weather_data)) {
@@ -287,7 +279,6 @@ module rainguard::rainguard {
         claim
     }
 
-    /// Validate weather data against policy thresholds
     public fun validate_weather_claim(
         policy: &InsurancePolicy,
         claim: &InsuranceClaim,
@@ -310,7 +301,6 @@ module rainguard::rainguard {
         }
     }
 
-    /// Process and approve a claim
     public fun approve_claim(
         claim: &mut InsuranceClaim,
         policy: &InsurancePolicy,
@@ -332,7 +322,6 @@ module rainguard::rainguard {
         pool.available_funds = pool.available_funds - payout_amount;
     }
 
-    /// Reject a claim
     public fun reject_claim(
         claim: &mut InsuranceClaim,
         admin_cap: &AdminCap,
@@ -345,22 +334,19 @@ module rainguard::rainguard {
         claim.validator_notes = validator_notes;
     }
 
-    /// Pay out an approved claim
     public fun payout_claim(
         claim: &mut InsuranceClaim,
         pool: &mut InsurancePool,
         admin_cap: &AdminCap,
-        ctx: &mut TxContext
+        ctx: &TxContext
     ) {
         assert!(claim.status == CLAIM_STATUS_APPROVED, E_INVALID_CLAIM);
 
         claim.status = CLAIM_STATUS_PAID;
-        // In a real implementation, you would transfer SUI tokens here
     }
 
     // ========== WEATHER INTEGRATION ==========
 
-    /// Record weather data for a location
     public fun record_weather_data(
         temperature: u64,
         rainfall_mm: u64,
@@ -374,12 +360,11 @@ module rainguard::rainguard {
             rainfall_mm,
             humidity,
             wind_speed,
-            timestamp: 0, // Simplified for now
+            timestamp: 0,
             location,
         }
     }
 
-    /// Check if weather conditions trigger automatic claim
     public fun check_weather_trigger(
         policy: &InsurancePolicy,
         weather: &WeatherData,
@@ -403,7 +388,6 @@ module rainguard::rainguard {
 
     // ========== POOL MANAGEMENT ==========
 
-    /// Add funds to the insurance pool
     public fun add_funds_to_pool(
         pool: &mut InsurancePool,
         amount: u64,
@@ -413,31 +397,26 @@ module rainguard::rainguard {
         pool.available_funds = pool.available_funds + amount;
     }
 
-    /// Get pool statistics
     public fun get_pool_stats(pool: &InsurancePool): (u64, u64, u64, u64, u64) {
         (pool.total_premiums, pool.total_payouts, pool.available_funds, pool.active_policies, pool.total_claims)
     }
 
     // ========== VIEW FUNCTIONS ==========
 
-    /// Get policy details
     public fun get_policy_details(policy: &InsurancePolicy): (u64, address, u64, u64, u64, u64, u8, vector<u8>, vector<u8>) {
         (policy.policy_id, policy.policyholder, policy.coverage_amount, policy.premium_amount, policy.start_date, policy.end_date, policy.status, policy.crop_type, policy.location)
     }
 
-    /// Get claim details
     public fun get_claim_details(claim: &InsuranceClaim): (u64, u64, address, u64, u64, u8, vector<u8>) {
         (claim.claim_id, claim.policy_id, claim.claimant, claim.claim_amount, claim.payout_amount, claim.status, claim.damage_assessment)
     }
 
-    /// Check if policyholder has active policy
     public fun has_active_policy(policy: &InsurancePolicy): bool {
         policy.status == POLICY_STATUS_ACTIVE
     }
 
     // ========== EVENTS ==========
 
-    /// Emit policy creation event
     public fun emit_policy_created(policy_id: u64, policyholder: address, coverage_amount: u64) {
         event::emit(PolicyCreated {
             policy_id,
@@ -446,7 +425,6 @@ module rainguard::rainguard {
         });
     }
 
-    /// Emit claim submitted event
     public fun emit_claim_submitted(claim_id: u64, policy_id: u64, claim_amount: u64) {
         event::emit(ClaimSubmitted {
             claim_id,
@@ -455,7 +433,6 @@ module rainguard::rainguard {
         });
     }
 
-    /// Emit claim approved event
     public fun emit_claim_approved(claim_id: u64, payout_amount: u64) {
         event::emit(ClaimApproved {
             claim_id,
@@ -481,4 +458,92 @@ module rainguard::rainguard {
         claim_id: u64,
         payout_amount: u64,
     }
+
+    // ========== ENTRY WRAPPERS ==========
+
+    /// Create a new insurance pool
+    public fun create_pool(ctx: &mut TxContext): InsurancePool {
+        InsurancePool {
+            id: object::new(ctx),
+            total_premiums: 0,
+            total_payouts: 0,
+            available_funds: 0,
+            active_policies: 0,
+            total_claims: 0,
+        }
+    }
+
+    public entry fun create_policy_entry(
+        coverage_amount: u64,
+        premium_amount: u64,
+        coverage_period_days: u64,
+        risk_types: vector<u8>,
+        land_area_hectares: u64,
+        crop_type: vector<u8>,
+        location: vector<u8>,
+        deductible: u64,
+        weather_thresholds: vector<u8>,
+        threshold_values: vector<u64>,
+        mut pool: InsurancePool,
+        ctx: &mut TxContext
+    ) {
+        let sender = tx_context::sender(ctx);
+        let (policy, cap) = create_policy(
+            sender,
+            coverage_amount, premium_amount, coverage_period_days,
+            risk_types, land_area_hectares, crop_type, location, deductible,
+            weather_thresholds, threshold_values, &mut pool, ctx
+        );
+        transfer::transfer(policy, sender);
+        transfer::transfer(cap, sender);
+        transfer::share_object(pool); // Partager le pool après création
+    }
+
+    public entry fun submit_claim_entry(
+        policy: &mut InsurancePolicy,
+        claim_amount: u64,
+        weather_data: vector<vector<u8>>,
+        weather_values: vector<u64>,
+        damage_assessment: vector<u8>,
+        pool: &mut InsurancePool,
+        ctx: &mut TxContext
+    ) {
+        let sender = tx_context::sender(ctx);
+        let claim = submit_claim(
+            policy, claim_amount, weather_data, weather_values, damage_assessment, pool, ctx
+        );
+        transfer::transfer(claim, sender);
+    }
+
+    public entry fun approve_claim_entry(
+        claim: &mut InsuranceClaim,
+        policy: &InsurancePolicy,
+        pool: &mut InsurancePool,
+        admin_cap: &AdminCap,
+        payout_amount: u64,
+        validator_notes: vector<u8>,
+        ctx: &mut TxContext
+    ) {
+        approve_claim(claim, policy, pool, admin_cap, payout_amount, validator_notes, ctx);
+    }
+
+    public entry fun payout_claim_entry(
+        claim: &mut InsuranceClaim,
+        pool: &mut InsurancePool,
+        admin_cap: &AdminCap,
+        ctx: &mut TxContext
+    ) {
+        payout_claim(claim, pool, admin_cap, ctx);
+    }
+
+    public entry fun add_funds_to_pool_entry(
+    pool: &mut InsurancePool,
+    amount: u64,
+    admin_cap: &AdminCap,
+    ctx: &mut TxContext
+) {
+    add_funds_to_pool(pool, amount, admin_cap, ctx);
+}
+
+
 }

@@ -18,6 +18,9 @@ import {
   AlertTriangle,
   Calendar
 } from 'lucide-react';
+import { CleanInsuranceCreator } from './components/CleanInsuranceCreator';
+import { WalletDisplayTest } from './components/WalletDisplayTest';
+import { DemoInsuranceTester } from './components/DemoInsuranceTester';
 
 export default function HomePage() {
   const [selectedRisk, setSelectedRisk] = useState<string>('');
@@ -86,7 +89,31 @@ export default function HomePage() {
                   Spécifier mon champ
                 </Link>
               </Button>
+              <Button asChild size="lg" variant="outline" className="text-blue-600 border-blue-600 hover:bg-blue-50 text-lg px-8 py-4">
+                <Link href="/verification">
+                  🔍 Vérifier les Polices
+                </Link>
+              </Button>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Test Rapide - Création de Police */}
+      <section className="py-16 bg-blue-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h3 className="text-3xl font-bold text-gray-900 mb-4">
+              🚀 Test Rapide - Créer une Police d'Assurance
+            </h3>
+            <p className="text-lg text-gray-600">
+              Créez une police d'assurance directement depuis le frontend et voyez-la apparaître dans votre wallet !
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <CleanInsuranceCreator />
+            <WalletDisplayTest />
           </div>
         </div>
       </section>
@@ -291,6 +318,75 @@ export default function HomePage() {
               <p className="text-gray-600">
                 Paiement automatique en cas de dommages détectés
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Test Section - Objets Sui */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h3 className="text-3xl font-bold text-gray-900 mb-4">
+              Test des Objets d'Assurance Sui
+            </h3>
+            <p className="text-lg text-gray-600">
+              Créez et gérez vos objets d'assurance directement dans votre wallet Sui
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <DemoInsuranceTester />
+            <div className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Avantages des objets Sui</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 text-sm">
+                    <li className="flex items-center">
+                      <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                      Stockage direct dans le wallet
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                      Pas de smart contract complexe
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                      Transfert facile entre wallets
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                      Métadonnées intégrées
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Types d'objets créés</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3">
+                      <Shield className="h-5 w-5 text-blue-500" />
+                      <div>
+                        <p className="font-medium">InsurancePolicy</p>
+                        <p className="text-sm text-gray-600">Contient les détails de l'assurance</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <CheckCircle className="h-5 w-5 text-green-500" />
+                      <div>
+                        <p className="font-medium">PolicyCap</p>
+                        <p className="text-sm text-gray-600">Capability pour gérer la police</p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>

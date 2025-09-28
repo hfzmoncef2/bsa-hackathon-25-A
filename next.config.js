@@ -8,6 +8,13 @@ const nextConfig = {
       },
     },
   },
+  webpack: (config) => {
+    config.watchOptions = {
+      ...config.watchOptions,
+      ignored: ['**/app/api/**'],
+    };
+    return config;
+  },
 };
 
 export default nextConfig;

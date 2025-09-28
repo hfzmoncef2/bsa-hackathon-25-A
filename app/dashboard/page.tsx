@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { suiContractService } from '@/services/sui-contract';
+import { InsuranceWalletObjects } from '@/components/InsuranceWalletObjects';
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -195,6 +196,7 @@ export default function DashboardPage() {
             {[
               { id: 'overview', name: 'Vue d\'ensemble' },
               { id: 'policies', name: 'Mes polices' },
+              { id: 'wallet', name: 'Wallet Sui' },
               { id: 'claims', name: 'Réclamations' },
               { id: 'weather', name: 'Météo' }
             ].map((tab) => (
@@ -423,6 +425,13 @@ export default function DashboardPage() {
                 );
               })}
             </div>
+          </div>
+        )}
+
+        {/* Wallet Sui - Objets d'assurance */}
+        {activeTab === 'wallet' && (
+          <div className="space-y-6">
+            <InsuranceWalletObjects />
           </div>
         )}
 

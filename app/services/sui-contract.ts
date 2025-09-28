@@ -43,6 +43,8 @@ export class SuiContractService {
         this.insurancePoolId
       ]);
 
+      console.log(result.contractAddress)
+
       return {
         success: true,
         policyId: result.policyId,

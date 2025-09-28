@@ -1,6 +1,7 @@
 [package]
 name = "rainguard"
 version = "0.0.1"
+published-at = "0xd28e4cf0eeaa232ceb08f293cc8d2f76ea719aa8b31a691fe11a9966b862b566"
 edition = "2024.beta"
 
 [dependencies]

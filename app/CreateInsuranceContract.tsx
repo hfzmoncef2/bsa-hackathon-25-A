@@ -4,10 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { useCurrentAccount } from "@mysten/dapp-kit";
-import { useSignAndExecuteTransaction } from "@mysten/dapp-kit";
+import { useCurrentAccount, useSignAndExecuteTransaction } from "@mysten/dapp-kit";
+import { Transaction } from "@mysten/sui/transactions";
 import { useNetworkVariable } from "./networkConfig";
-import { Droplets, Wind, Thermometer, Shield, ArrowLeft } from "lucide-react";
+import { Droplets, Wind, Thermometer, Shield, ArrowLeft, CheckCircle } from "lucide-react";
+import { suiInsuranceObjectsService } from "@/services/sui-insurance-objects";
 
 interface InsurancePlan {
   id: string;
@@ -18,9 +19,6 @@ interface InsurancePlan {
   threshold: number;
   duration: number;
   description: string;
-  benefits: string[];
-  riskLevel: 'low' | 'medium' | 'high';
-  recommended: boolean;
 }
 
 interface CreateInsuranceContractProps {
@@ -30,17 +28,18 @@ interface CreateInsuranceContractProps {
 
 export function CreateInsuranceContract({ onBack, preSelectedPlan }: CreateInsuranceContractProps) {
   const currentAccount = useCurrentAccount();
-  const { mutate: signAndExecute } = useSignAndExecuteTransaction();
+  const { mutateAsync: signAndExecute } = useSignAndExecuteTransaction();
   const rainguardPackageId = useNetworkVariable("rainguardPackageId");
   
   const [contractType, setContractType] = useState<number>(preSelectedPlan ? getContractTypeFromPlan(preSelectedPlan.type) : 0);
   const [coverageAmount, setCoverageAmount] = useState<string>(preSelectedPlan ? preSelectedPlan.coverage.toString() : "");
   const [premium, setPremium] = useState<string>(preSelectedPlan ? preSelectedPlan.premium.toString() : "");
   const [threshold, setThreshold] = useState<string>(preSelectedPlan ? preSelectedPlan.threshold.toString() : "");
-  const [duration, setDuration] = useState<string>(preSelectedPlan ? preSelectedPlan.duration.toString() : "90");
+  const [duration, setDuration] = useState<string>(preSelectedPlan ? preSelectedPlan.duration.toString() : "");
   const [isLoading, setIsLoading] = useState(false);
+  const [contractCreated, setContractCreated] = useState(false);
+  const [createdObjects, setCreatedObjects] = useState<{ policyObject: any; capObject: any } | null>(null);
 
-  // Fonction pour convertir le type de plan en type de contrat
   function getContractTypeFromPlan(planType: string): number {
     switch (planType) {
       case 'drought': return 0;
@@ -49,6 +48,13 @@ export function CreateInsuranceContract({ onBack, preSelectedPlan }: CreateInsur
       default: return 0;
     }
   }
+
+  // Map UI -> codes Move
+  const RISK_TYPE_BY_UI: Record<number, number> = {
+    0: 1, // drought
+    1: 2, // flood
+    2: 4, // excessive rain / tempête
+  };
 
   const contractTypes = [
     { value: 0, label: "Sécheresse", icon: Droplets, color: "text-orange-500", description: "Protection contre le manque de pluie" },
@@ -62,32 +68,44 @@ export function CreateInsuranceContract({ onBack, preSelectedPlan }: CreateInsur
       return;
     }
 
-    if (!coverageAmount || !premium || !threshold || !duration) {
-      alert("Veuillez remplir tous les champs");
+    if (!coverageAmount || !premium) {
+      alert("Veuillez remplir tous les champs obligatoires");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      // Note: Cette fonction nécessite que le package soit déployé sur le réseau
-      // Pour la démo, nous simulons la création
-      console.log("Création du contrat d'assurance:", {
-        contractType,
-        coverageAmount: parseInt(coverageAmount),
-        premium: parseInt(premium),
-        threshold: parseInt(threshold),
-        duration: parseInt(duration),
-      });
-
-      // Simulation d'un délai de transaction
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const riskType = RISK_TYPE_BY_UI[contractType] ?? 1;
       
-      alert("Contrat d'assurance créé avec succès !");
+      // Utiliser le service pour créer les objets d'assurance
+      const result = await suiInsuranceObjectsService.createInsuranceObject(
+        parseInt(coverageAmount),
+        parseInt(premium),
+        riskType,
+        signAndExecute,
+        currentAccount
+      );
+
+      console.log("Objets d'assurance créés:", result);
+      
+      setCreatedObjects(result);
+      setContractCreated(true);
+
+      // Stocker les IDs dans localStorage pour référence
+      localStorage.setItem('insurancePolicyId', result.policyObject.objectId);
+      localStorage.setItem('insuranceCapId', result.capObject.objectId);
+      
+      console.log("Objet InsurancePolicy créé avec l'ID:", result.policyObject.objectId);
+      console.log("Objet PolicyCap créé avec l'ID:", result.capObject.objectId);
+
+      // Notification de succès avec les IDs
+      alert(`Contrat d'assurance créé ✅\nTransaction terminée avec succès !\n\nInsurancePolicy ID: ${result.policyObject.objectId}\nPolicyCap ID: ${result.capObject.objectId}\n\nVérifiez votre wallet Sui !`);
+      
       onBack();
     } catch (error) {
       console.error("Erreur lors de la création du contrat:", error);
-      alert("Erreur lors de la création du contrat");
+      alert(`Erreur lors de la création du contrat: ${error}`);
     } finally {
       setIsLoading(false);
     }
@@ -98,8 +116,6 @@ export function CreateInsuranceContract({ onBack, preSelectedPlan }: CreateInsur
       {/* Header */}
       <div className="flex items-center gap-4">
         <Button
-          variant="outline"
-          size="sm"
           onClick={onBack}
           className="flex items-center gap-2"
         >
@@ -146,7 +162,7 @@ export function CreateInsuranceContract({ onBack, preSelectedPlan }: CreateInsur
             {contractTypes.map((type) => (
               <div
                 key={type.value}
-                className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+                className={`p-3 border rounded-lg cursor-pointer transition-colors \${
                   contractType === type.value
                     ? "border-green-500 bg-green-50"
                     : "border-gray-200 hover:border-gray-300"
@@ -154,7 +170,7 @@ export function CreateInsuranceContract({ onBack, preSelectedPlan }: CreateInsur
                 onClick={() => setContractType(type.value)}
               >
                 <div className="flex items-center gap-3">
-                  <type.icon className={`h-5 w-5 ${type.color}`} />
+                  <type.icon className={`h-5 w-5 \${type.color}`} />
                   <div>
                     <div className="font-medium">{type.label}</div>
                     <div className="text-sm text-gray-500">{type.description}</div>
@@ -172,102 +188,88 @@ export function CreateInsuranceContract({ onBack, preSelectedPlan }: CreateInsur
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">
-                Montant de Couverture (SUI)
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Montant de couverture (SUI)
               </label>
               <Input
                 type="number"
                 value={coverageAmount}
                 onChange={(e) => setCoverageAmount(e.target.value)}
-                placeholder="1000"
+                placeholder="10000"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">
-                Prime d'Assurance (SUI)
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Prime mensuelle (SUI)
               </label>
               <Input
                 type="number"
                 value={premium}
                 onChange={(e) => setPremium(e.target.value)}
-                placeholder="50"
+                placeholder="100"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">
-                Seuil de Déclenchement
-                {contractType === 0 && " (mm de pluie minimum)"}
-                {contractType === 1 && " (cm niveau d'eau maximum)"}
-                {contractType === 2 && " (km/h vitesse vent maximum)"}
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Seuil de déclenchement (mm)
               </label>
               <Input
                 type="number"
                 value={threshold}
                 onChange={(e) => setThreshold(e.target.value)}
-                placeholder={contractType === 0 ? "50" : contractType === 1 ? "100" : "80"}
+                placeholder="50"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">
-                Durée du Contrat (jours)
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Durée (jours)
               </label>
               <Input
                 type="number"
                 value={duration}
                 onChange={(e) => setDuration(e.target.value)}
-                placeholder="90"
+                placeholder="365"
               />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Résumé et Création */}
+      {/* Résumé et création */}
       <Card>
         <CardHeader>
           <CardTitle>Résumé du Contrat</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <div>
-              <span className="text-gray-500">Type:</span>
-              <div className="font-medium">{contractTypes[contractType].label}</div>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div className="text-center p-3 bg-gray-50 rounded-lg">
+              <div className="font-semibold text-lg">{coverageAmount || "0"} SUI</div>
+              <div className="text-sm text-gray-600">Couverture</div>
             </div>
-            <div>
-              <span className="text-gray-500">Couverture:</span>
-              <div className="font-medium">{coverageAmount} SUI</div>
+            <div className="text-center p-3 bg-gray-50 rounded-lg">
+              <div className="font-semibold text-lg">{premium || "0"} SUI</div>
+              <div className="text-sm text-gray-600">Prime mensuelle</div>
             </div>
-            <div>
-              <span className="text-gray-500">Prime:</span>
-              <div className="font-medium">{premium} SUI</div>
+            <div className="text-center p-3 bg-gray-50 rounded-lg">
+              <div className="font-semibold text-lg">{threshold || "0"}mm</div>
+              <div className="text-sm text-gray-600">Seuil</div>
             </div>
-            <div>
-              <span className="text-gray-500">Durée:</span>
-              <div className="font-medium">{duration} jours</div>
+            <div className="text-center p-3 bg-gray-50 rounded-lg">
+              <div className="font-semibold text-lg">{duration || "0"} jours</div>
+              <div className="text-sm text-gray-600">Durée</div>
             </div>
           </div>
 
-          <div className="flex gap-4 pt-4">
-            <Button
-              onClick={handleCreateContract}
-              disabled={isLoading || !currentAccount}
-              className="bg-green-600 hover:bg-green-700"
-            >
-              {isLoading ? "Création en cours..." : "Créer le Contrat"}
-            </Button>
-            <Button variant="outline" onClick={onBack}>
-              Annuler
-            </Button>
-          </div>
-
-          {!currentAccount && (
-            <p className="text-sm text-red-600">
-              Veuillez connecter votre portefeuille pour créer un contrat
-            </p>
-          )}
+          <Button
+            onClick={handleCreateContract}
+            disabled={isLoading}
+            className="w-full"
+          >
+            {isLoading ? "Création en cours..." : "Créer le Contrat d'Assurance"}
+          </Button>
         </CardContent>
       </Card>
     </div>

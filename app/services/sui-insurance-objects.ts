@@ -77,7 +77,7 @@ export class SuiInsuranceObjectsService {
 
     if (!policyObject || !capObject) {
       console.error("❌ Erreur: Objets non trouvés");
-      console.error("📋 Objets disponibles:", createdObjects.map(obj => obj.reference?.objectType));
+      console.error("📋 Objets disponibles:", createdObjects.map((obj: any) => obj.reference?.objectType));
       throw new Error('Erreur lors de la création des objets d\'assurance');
     }
 

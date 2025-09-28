@@ -1,15 +1,15 @@
-import { useSignAndExecuteTransactionBlock } from '@mysten/dapp-kit';
-import { suiContractService } from './sui-contract';
+import { useSignAndExecuteTransaction } from '@mysten/dapp-kit';
+import { suiContractService } from '../services/sui-contract';
 
 export const useSuiContract = () => {
-  const { mutateAsync: signAndExecute } = useSignAndExecuteTransactionBlock();
+  const { mutateAsync: signAndExecute } = useSignAndExecuteTransaction();
 
   const createInsurancePolicy = async (fieldData: any, premium: number) => {
-    return await suiContractService.createInsurancePolicy(fieldData, premium, { mutateAsync: signAndExecute });
+    return await suiContractService.createInsurancePolicy(fieldData, premium);
   };
 
   const getPoolStats = async () => {
-    return await suiContractService.getPoolStats({ mutateAsync: signAndExecute });
+    return await suiContractService.getPoolStats();
   };
 
   const submitClaim = async (policyId: string, claimData: any) => {

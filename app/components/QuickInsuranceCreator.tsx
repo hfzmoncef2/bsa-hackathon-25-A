@@ -48,7 +48,7 @@ export function QuickInsuranceCreator() {
           tx.pure(new Uint8Array(new TextEncoder().encode("Farm_001"))), // location en vector<u8>
           tx.pure.u64(50000000000), // deductible en MIST
           tx.pure(new Uint8Array([1])), // weather_thresholds: [1] = sécheresse
-          tx.pure.vector([tx.pure.u64(50000000000)]), // threshold_values: [50 SUI en MIST]
+          tx.pure.vector('u64', [50000000000]), // threshold_values: [50 SUI en MIST]
           // Le pool sera trouvé automatiquement car il est partagé
         ],
       });

@@ -4,13 +4,21 @@ import { useState } from 'react';
 import { useSignAndExecuteTransaction, useCurrentAccount } from '@mysten/dapp-kit';
 import { suiInsuranceCleanService } from '../services/sui-insurance-clean';
 
-export function CleanInsuranceCreator() {
+export default function CleanInsuranceCreator() {
   const [coverageAmount, setCoverageAmount] = useState<number>(1000);
   const [premiumAmount, setPremiumAmount] = useState<number>(100);
   const [riskType, setRiskType] = useState<number>(1);
   const [isCreating, setIsCreating] = useState(false);
   const [contractCreated, setContractCreated] = useState(false);
   const [createdObjects, setCreatedObjects] = useState<any>(null);
+  const [packageIdInput, setPackageIdInput] = useState<string>('');
+  
+  // Conditions météo
+  const [maxTemperature, setMaxTemperature] = useState<number>(35);
+  const [maxRainfall, setMaxRainfall] = useState<number>(50);
+  const [maxHumidity, setMaxHumidity] = useState<number>(80);
+  const [locationLat, setLocationLat] = useState<number>(48.8566); // Paris par défaut
+  const [locationLng, setLocationLng] = useState<number>(2.3522);
 
   const { mutate: signAndExecute } = useSignAndExecuteTransaction();
   const currentAccount = useCurrentAccount();
@@ -32,6 +40,13 @@ export function CleanInsuranceCreator() {
         coverageAmount,
         premiumAmount,
         riskType,
+        maxTemperature,
+        5, // minTemperature fixe
+        maxRainfall,
+        30, // minHumidity fixe
+        maxHumidity,
+        locationLat,
+        locationLng,
         signAndExecute,
         currentAccount
       );
@@ -61,10 +76,11 @@ Les objets sont maintenant dans votre wallet Sui !`);
   };
 
   const handleSetPackageId = () => {
-    const packageId = prompt('Entrez le Package ID du contrat déployé:');
-    if (packageId) {
-      suiInsuranceCleanService.setPackageId(packageId);
+    if (packageIdInput) {
+      suiInsuranceCleanService.setPackageId(packageIdInput);
       alert('✅ Package ID défini avec succès !');
+    } else {
+      alert('❌ Veuillez entrer un Package ID valide.');
     }
   };
 
@@ -75,6 +91,31 @@ Les objets sont maintenant dans votre wallet Sui !`);
       </h2>
       
       <div className="space-y-4">
+        {/* Configuration Package ID */}
+        <div className="p-4 bg-gray-50 rounded-lg">
+          <h4 className="text-sm font-medium text-gray-700 mb-2">Configuration Contrat</h4>
+          <div className="flex items-center space-x-4">
+            <input
+              type="text"
+              value={packageIdInput}
+              onChange={(e) => setPackageIdInput(e.target.value)}
+              placeholder="Package ID du contrat (ex: 0x...)"
+              className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm"
+            />
+            <button
+              onClick={handleSetPackageId}
+              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm"
+            >
+              Définir
+            </button>
+          </div>
+          {suiInsuranceCleanService.isDeployed() && (
+            <p className="mt-2 text-xs text-green-600">
+              ✅ Contrat configuré : {suiInsuranceCleanService.getPackageId()?.slice(0, 8)}...{suiInsuranceCleanService.getPackageId()?.slice(-8)}
+            </p>
+          )}
+        </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Montant de couverture (SUI)
@@ -110,26 +151,87 @@ Les objets sont maintenant dans votre wallet Sui !`);
             onChange={(e) => setRiskType(Number(e.target.value))}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value={1}>Sécheresse</option>
-            <option value={2}>Inondation</option>
-            <option value={3}>Tempête</option>
+            <option value={1}>Risques Météo</option>
           </select>
         </div>
 
-        <div className="flex space-x-4">
-          <button
-            onClick={handleSetPackageId}
-            className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
-          >
-            📦 Définir Package ID
-          </button>
+        {/* Conditions météo simplifiées */}
+        <div className="border-t pt-4">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">🌤️ Conditions Météo</h3>
           
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Température max (°C)
+              </label>
+              <input
+                type="number"
+                value={maxTemperature}
+                onChange={(e) => setMaxTemperature(Number(e.target.value))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="35"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Pluviométrie max (mm)
+              </label>
+              <input
+                type="number"
+                value={maxRainfall}
+                onChange={(e) => setMaxRainfall(Number(e.target.value))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="50"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Humidité max (%)
+              </label>
+              <input
+                type="number"
+                value={maxHumidity}
+                onChange={(e) => setMaxHumidity(Number(e.target.value))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="80"
+              />
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Position (Latitude, Longitude)
+            </label>
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                type="number"
+                step="0.0001"
+                value={locationLat}
+                onChange={(e) => setLocationLat(Number(e.target.value))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="48.8566"
+              />
+              <input
+                type="number"
+                step="0.0001"
+                value={locationLng}
+                onChange={(e) => setLocationLng(Number(e.target.value))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="2.3522"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-center">
           <button
             onClick={handleCreateContract}
             disabled={isCreating || !suiInsuranceCleanService.isDeployed() || !currentAccount}
-            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+            className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-lg font-semibold"
           >
-            {isCreating ? '⏳ Création...' : '🚀 Créer Contrat'}
+            {isCreating ? '⏳ Création...' : '🚀 Créer Contrat d\'Assurance'}
           </button>
         </div>
 

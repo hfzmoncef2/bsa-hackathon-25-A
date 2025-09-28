@@ -12,8 +12,8 @@ export function WalletDisplayTest() {
   const { mutateAsync: signAndExecute } = useSignAndExecuteTransaction();
   
   const [isLoading, setIsLoading] = useState(false);
-  const [testResult, setTestResult] = useState(null);
-  const [walletObjects, setWalletObjects] = useState([]);
+  const [testResult, setTestResult] = useState<any>(null);
+  const [walletObjects, setWalletObjects] = useState<any[]>([]);
 
   const PACKAGE_ID = '0xd28e4cf0eeaa232ceb08f293cc8d2f76ea719aa8b31a691fe11a9966b862b566';
 
@@ -53,17 +53,17 @@ export function WalletDisplayTest() {
 
       if (createdObjects && createdObjects.length > 0) {
         console.log('🎉 Objets créés dans le wallet:');
-        createdObjects.forEach((obj, index) => {
+        createdObjects.forEach((obj: any, index: number) => {
           console.log(`  ${index + 1}. Type: ${obj.reference?.objectType}`);
           console.log(`     ID: ${obj.reference?.objectId}`);
           console.log(`     Owner: ${obj.reference?.owner}`);
         });
         
         // Vérifier spécifiquement les objets InsurancePolicy et PolicyCap
-        const insurancePolicy = createdObjects.find(obj => 
+        const insurancePolicy = createdObjects.find((obj: any) => 
           obj.reference?.objectType?.includes('InsurancePolicy')
         );
-        const policyCap = createdObjects.find(obj => 
+        const policyCap = createdObjects.find((obj: any) => 
           obj.reference?.objectType?.includes('PolicyCap')
         );
         
@@ -107,7 +107,7 @@ export function WalletDisplayTest() {
       console.error('❌ Erreur lors de la création:', error);
       setTestResult({
         success: false,
-        error: error.message || 'Erreur inconnue'
+        error: (error as Error).message || 'Erreur inconnue'
       });
     } finally {
       setIsLoading(false);
